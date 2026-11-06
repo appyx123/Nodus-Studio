@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-get-simulation-frame"
+description = "Enables the get_simulation_frame command without any pre-configured scope."
+commands.allow = ["get_simulation_frame"]
+
+[[permission]]
+identifier = "deny-get-simulation-frame"
+description = "Denies the get_simulation_frame command without any pre-configured scope."
+commands.deny = ["get_simulation_frame"]

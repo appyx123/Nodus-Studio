@@ -1,9 +1,11 @@
 use super::circuit::{self, ManagedCircuit};
 use super::frame_streamer::FrameStreamer;
+use super::simulation::{SimulationAction, SimulationController, SimulationStatus};
 use crate::engine::{CircuitEdit, CircuitSnapshot};
 use crate::sandbox::pkg_loader::{scan_registry, RegistryCatalog};
 use crate::NodusError;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 use tauri::Manager;
 
 fn resource_registry(resource_dir: &Path) -> PathBuf {
@@ -42,17 +44,43 @@ pub async fn get_circuit(
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn edit_circuit(
+    controller: tauri::State<'_, SimulationController>,
     state: tauri::State<'_, ManagedCircuit>,
     edit: CircuitEdit,
 ) -> Result<CircuitSnapshot, NodusError> {
+    if controller.is_active() {
+        return Err(NodusError::Circuit(
+            "Stop the simulation before editing the circuit".into(),
+        ));
+    }
     circuit::edit(&state, edit)
 }
 
 #[tauri::command]
 pub async fn get_simulation_frame(
-    streamer: tauri::State<'_, FrameStreamer>,
+    streamer: tauri::State<'_, Arc<FrameStreamer>>,
 ) -> Result<tauri::ipc::Response, NodusError> {
     streamer.read_latest_bytes().map(tauri::ipc::Response::new)
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn control_simulation(
+    controller: tauri::State<'_, SimulationController>,
+    circuit: tauri::State<'_, ManagedCircuit>,
+    streamer: tauri::State<'_, Arc<FrameStreamer>>,
+    action: SimulationAction,
+) -> Result<SimulationStatus, NodusError> {
+    controller.control(action, &circuit, &streamer)
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn set_control_value(
+    controller: tauri::State<'_, SimulationController>,
+    instance_id: String,
+    control_id: String,
+    value: f64,
+) -> Result<SimulationStatus, NodusError> {
+    controller.set_control_value(instance_id, control_id, value)
 }
 
 #[cfg(test)]

@@ -1,6 +1,3 @@
-// Producer side (simulation thread) is wired in Phase 2 Step 4.
-#![allow(dead_code)]
-
 use crate::engine::{Endpoint, LogicLevel, NetState, RunState, SimTime};
 use crate::NodusError;
 use crossbeam_channel::{bounded, Receiver, Sender, TrySendError};

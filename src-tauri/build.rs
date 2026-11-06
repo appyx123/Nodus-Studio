@@ -4,6 +4,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "list_components",
             "get_circuit",
             "edit_circuit",
+            "get_simulation_frame",
+            "control_simulation",
+            "set_control_value",
         ]));
     tauri_build::try_build(attributes)?;
     Ok(())

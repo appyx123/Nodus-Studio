@@ -1,10 +1,12 @@
 pub mod circuit_graph;
 pub mod pin;
+pub mod runtime;
 pub mod scheduler;
 mod types;
 
-pub use circuit_graph::CircuitState;
+pub use circuit_graph::{CircuitState, InstanceProgram};
 pub use pin::{DriveStrength, LogicLevel, NetState, PinMode, PinRuntime};
+pub use runtime::SimulationRuntime;
 pub use scheduler::{EventPayload, RunState, ScheduledEvent, Scheduler, SimTime};
 pub use types::*;
 
@@ -12,6 +14,8 @@ pub use types::*;
 mod contract_tests;
 #[cfg(test)]
 mod graph_tests;
+#[cfg(test)]
+mod runtime_tests;
 #[cfg(test)]
 mod simulation_tests;
 #[cfg(test)]

@@ -312,7 +312,15 @@ fn builtin_led_matches_the_shared_manifest_contract() {
     let workspace = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
     let catalog = scan_registry(&workspace.join("components-registry")).unwrap();
     assert!(catalog.diagnostics.is_empty(), "{:?}", catalog.diagnostics);
-    assert_eq!(catalog.packages.len(), 1);
+    let ids: Vec<_> = catalog
+        .packages
+        .iter()
+        .map(|p| p.manifest.component.id.as_str())
+        .collect();
+    assert_eq!(
+        ids,
+        vec!["basic-led", "basic-power-source", "basic-pushbutton"]
+    );
     let actual = serde_json::to_value(&catalog.packages[0].manifest).unwrap();
     let expected: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(workspace.join("docs/nodpkg-v1-led.json")).unwrap(),

@@ -1,9 +1,9 @@
 use crate::engine::{CircuitEdit, CircuitSnapshot, CircuitState};
 use crate::sandbox::pkg_loader::RegistryCatalog;
 use crate::NodusError;
-use std::sync::{Mutex, MutexGuard};
+use std::sync::{Arc, Mutex, MutexGuard};
 
-pub type ManagedCircuit = Mutex<CircuitState>;
+pub type ManagedCircuit = Arc<Mutex<CircuitState>>;
 
 fn lock(state: &ManagedCircuit) -> Result<MutexGuard<'_, CircuitState>, NodusError> {
     state

@@ -4,20 +4,20 @@
 
 Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint tetap menjadi sumber kebenaran persyaratan; file ini merangkum keadaan implementasi.
 
-- **Fase aktif:** Fase 2 — Mesin Simulasi Inti & Sandbox Komponen Lua (`in-progress`).
-- **Subtahap terakhir:** Fase 2 Langkah 3 — protokol frame biner dan streamer 60 Hz (`partial`: uji transport Tauri/WebKitGTK `not-run`).
+- **Fase aktif:** Fase 2 — Mesin Simulasi Inti & Sandbox Komponen Lua (`completed`).
+- **Subtahap terakhir:** Fase 2 Langkah 4 — komponen bawaan, thread simulasi, dan kontrol simulasi end-to-end (`completed`).
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 1 telah memiliki bukti uji; pemeriksaan input fisik manual dicatat `not-run`).
-- **Laporan terbaru:** [012 — Protokol frame biner dan frame streamer](docs/reports/012-phase-2-binary-frame-streamer.md).
+- **Laporan terbaru:** [013 — Komponen bawaan dan runtime simulasi](docs/reports/013-phase-2-builtin-components-and-simulation-runtime.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Fase 2 Langkah 4 — komponen registry, thread simulasi, kontrol simulasi end-to-end (`in-progress`).
+- **Langkah berikutnya:** Fase 3 Langkah 1 — integrasi editor kode Monaco dan worker `arduino-cli` (`not-started`).
 
 ## Ringkasan roadmap
 
 | Fase | Status | Bukti / catatan |
 | --- | --- | --- |
 | 1 — Fondasi dan kanvas | `completed` | Scaffold Tauri v2 + SolidJS, loader `.nodpkg` v1, katalog, kanvas pan/zoom/snap/drag, `WireLayer.tsx` Manhattan, dan netlist Rust (`circuit_graph.rs`) lulus 56 tes Rust, 24 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
-| 2 — Mesin simulasi dan Lua | `not-started` | Siap dimulai setelah Fase 1 selesai |
+| 2 — Mesin simulasi dan Lua | `completed` | `SimTime` half-ns, `Scheduler`, resolusi net digital, sandbox Lua 5.4 (`mlua`), streamer biner `NDFR` 60 Hz, `basic-power-source`/`basic-pushbutton`/`basic-led`, lulus 70 tes Rust, 26 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 3 — Editor, compiler, dan AVR | `not-started` | Menunggu Fase 2 selesai dan teruji |
 | 4 — Sensor, bus, dan MQTT | `not-started` | Menunggu Fase 3 selesai dan teruji |
 | 5 — Penyimpanan dan distribusi | `not-started` | Menunggu Fase 4 selesai dan teruji |
@@ -76,5 +76,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [010 — Fase 2: scheduler deterministik dan resolusi net digital](docs/reports/010-phase-2-scheduler-and-net-resolution.md)
 - [011 — Fase 2: sandbox Lua 5.4 dan kontrak API host v1](docs/reports/011-phase-2-lua-sandbox-host.md)
 - [012 — Fase 2: protokol frame biner dan frame streamer](docs/reports/012-phase-2-binary-frame-streamer.md)
+- [013 — Fase 2: komponen bawaan dan runtime simulasi](docs/reports/013-phase-2-builtin-components-and-simulation-runtime.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `013` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `014` (periksa ulang sebelum membuat file).

@@ -3,7 +3,7 @@ use super::{
     CircuitEdit, CircuitSnapshot, Endpoint, InstanceSnapshot, Net, Wire,
 };
 use crate::sandbox::{
-    manifest::{Pin, PinType},
+    manifest::{Manifest, Pin, PinType},
     pkg_loader::RegistryCatalog,
 };
 use crate::NodusError;
@@ -17,6 +17,15 @@ type Pins = BTreeMap<String, Pin>;
 struct Definition {
     version: String,
     pins: Pins,
+    manifest: Manifest,
+    lua_source: String,
+}
+
+/// Everything the simulation runtime needs to start one component instance.
+pub struct InstanceProgram {
+    pub instance_id: String,
+    pub manifest: Manifest,
+    pub lua_source: String,
 }
 
 struct Instance {
@@ -51,10 +60,30 @@ impl CircuitState {
                             .iter()
                             .map(|pin| (pin.id.clone(), pin.clone()))
                             .collect(),
+                        manifest: manifest.clone(),
+                        lua_source: package.lua_source.clone(),
                     },
                 )
             })
             .collect();
+    }
+
+    /// Instances whose catalog definition still matches their pinned version.
+    pub fn instance_programs(&self) -> Vec<InstanceProgram> {
+        let mut programs = Vec::new();
+        for (id, instance) in &self.instances {
+            let Some(def) = self.catalog.get(&instance.component_id) else {
+                continue;
+            };
+            if def.version == instance.component_version {
+                programs.push(InstanceProgram {
+                    instance_id: id.clone(),
+                    manifest: def.manifest.clone(),
+                    lua_source: def.lua_source.clone(),
+                });
+            }
+        }
+        programs
     }
 
     pub fn snapshot(&self) -> CircuitSnapshot {

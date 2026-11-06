@@ -1,0 +1,46 @@
+schema_version = 1
+
+[compatibility]
+engine_api = 1
+
+[component]
+id = "basic-pushbutton"
+name = "Pushbutton"
+category = "Input"
+author = "Nodus Community"
+version = "1.0.0"
+description = "Momentary SPST pushbutton bridging IN and OUT when pressed."
+
+[electrical]
+operating_voltage_min = 0.0
+operating_voltage_max = 5.0
+
+[[pins]]
+id = "IN"
+name = "Input"
+type = "input"
+svg_anchor = "pin-in"
+
+[[pins]]
+id = "OUT"
+name = "Output"
+type = "output"
+svg_anchor = "pin-out"
+
+[[controls]]
+id = "pressed"
+label = "Pressed"
+type = "slider"
+min = 0.0
+max = 1.0
+step = 1.0
+default = 0.0
+
+[[visuals]]
+id = "cap"
+type = "number"
+target = "dyn-cap"
+property = "opacity"
+min = 0.25
+max = 1.0
+default = 0.35

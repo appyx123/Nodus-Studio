@@ -1,4 +1,5 @@
 import { createEffect, createMemo, onCleanup } from "solid-js";
+import { simulationFrame } from "../../store/simulationStore";
 import type { ComponentPackage, Endpoint } from "../../types/nodpkg";
 import type { Point } from "./geometry";
 import { instanceGraphic } from "./graphic";
@@ -29,6 +30,18 @@ export default function NodeRenderer(props: Props) {
     const graphic = instanceGraphic(pkg().svg, instanceId(), pkg().manifest.pins);
     host.replaceChildren(graphic.element);
     onCleanup(() => graphic.element.remove());
+  });
+  createEffect(() => {
+    const id = instanceId();
+    const visuals = pkg().manifest.visuals;
+    const inst = simulationFrame()?.instances.find((item) => item.instance_id === id);
+    for (const v of visuals) {
+      const target = host.querySelector(`[data-original-id="${v.target}"]`);
+      const val = inst?.visuals[v.id] ?? v.default;
+      if (target && v.property === "opacity") {
+        target.setAttribute("opacity", String(val));
+      }
+    }
   });
   createEffect(() => {
     const active = props.activeEndpoint;

@@ -96,7 +96,7 @@ def main():
         process = subprocess.Popen([str(executable)], cwd=working_directory,
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         try:
-            records = wait_for(process, lambda rows: contains(rows, "1 package(s) loaded")
+            records = wait_for(process, lambda rows: contains(rows, "3 package(s) loaded")
                                and contains(rows, "Red LED") and contains(rows, "Rejected packages")
                                and contains(rows, "invalid-smoke.nodpkg"),
                                "relocated resources load the LED and isolate an invalid package")
@@ -138,6 +138,19 @@ def main():
             records = wait_for(process, lambda rows: contains(rows, "0 wire(s)")
                                and contains(rows, "4 net(s) (0 connected)"),
                                "native Delete selected removes the selected wire and splits the net")
+            activate(records, "Start")
+            records = wait_for(process, lambda rows: contains(rows, "Sim: running"),
+                               "native Start runs simulation and streams binary frames")
+            activate(records, "Pause")
+            records = wait_for(process, lambda rows: contains(rows, "Sim: paused"),
+                               "native Pause pauses simulation")
+            activate(records, "Resume")
+            records = wait_for(process, lambda rows: contains(rows, "Sim: running"),
+                               "native Resume resumes simulation")
+            activate(records, "Reset")
+            records = wait_for(process, lambda rows: contains(rows, "Sim: stopped"),
+                               "native Reset stops simulation and resets state")
+            print("PASS: native simulation start/pause/resume/reset lifecycle and binary frame stream verified", flush=True)
             activate(records, "Delete selected")
             records = wait_for(process, lambda rows: contains(rows, "1 instance(s)")
                                and contains(rows, "2 net(s)")
@@ -145,7 +158,7 @@ def main():
 
             shutil.rmtree(invalid)
             reload_catalog(records)
-            records = wait_for(process, lambda rows: contains(rows, "1 package(s) loaded")
+            records = wait_for(process, lambda rows: contains(rows, "3 package(s) loaded")
                                and not contains(rows, "Rejected packages"),
                                "Reload removes the resolved diagnostic")
 
@@ -157,7 +170,7 @@ def main():
 
             shutil.copytree(BUILT_REGISTRY, registry)
             reload_catalog(records)
-            wait_for(process, lambda rows: contains(rows, "1 package(s) loaded")
+            wait_for(process, lambda rows: contains(rows, "3 package(s) loaded")
                      and contains(rows, "Red LED") and not contains(rows, "Component discovery failed:"),
                      "Reload recovers after the registry is restored")
         finally:

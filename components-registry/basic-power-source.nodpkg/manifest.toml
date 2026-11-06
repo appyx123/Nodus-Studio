@@ -1,0 +1,28 @@
+schema_version = 1
+
+[compatibility]
+engine_api = 1
+
+[component]
+id = "basic-power-source"
+name = "5V Power Source"
+category = "Power"
+author = "Nodus Community"
+version = "1.0.0"
+description = "Fixed 5 V and GND supply terminals."
+
+[electrical]
+operating_voltage_min = 5.0
+operating_voltage_max = 5.0
+
+[[pins]]
+id = "VCC"
+name = "5V (+)"
+type = "power"
+svg_anchor = "pin-vcc"
+
+[[pins]]
+id = "GND"
+name = "GND (-)"
+type = "ground"
+svg_anchor = "pin-gnd"

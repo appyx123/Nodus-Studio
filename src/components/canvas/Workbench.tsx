@@ -8,6 +8,7 @@ import type { Point, Viewport } from "./geometry";
 import { instanceGraphic } from "./graphic";
 import NodeRenderer from "./NodeRenderer";
 import type { CanvasNode } from "./NodeRenderer";
+import SimulationBar from "./SimulationBar";
 import WireLayer from "./WireLayer";
 
 interface Props {
@@ -275,6 +276,7 @@ export default function Workbench(props: Props) {
             <h2 id="workbench-heading" class="text-sm font-semibold">Circuit workbench</h2>
             <p class="mt-1 text-xs text-zinc-400">Authoritative Rust topology · no electrical simulation yet</p>
           </div>
+          <SimulationBar selectedNode={selectedNode()} onError={setErrorMessage} onStatus={setMessage} />
           <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Wire color controls">
             <span class="text-xs text-zinc-400">Wire color:</span>
             <For each={WIRE_COLORS}>{(color) => (
