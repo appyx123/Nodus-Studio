@@ -5,12 +5,12 @@
 Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint tetap menjadi sumber kebenaran persyaratan; file ini merangkum keadaan implementasi.
 
 - **Fase aktif:** Fase 3 — Integrasi Editor Kode, `arduino-cli`, & Emulasi MCU Pertama (`in-progress`).
-- **Subtahap terakhir:** Fase 3 Langkah 1 — spike evaluasi backend AVR dan persetujuan `avr-emulator` (`completed`).
+- **Subtahap terakhir:** Fase 3 Langkah 2 — integrasi editor kode, Serial Monitor, dan `arduino_cli.rs` (`completed`).
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 1 telah memiliki bukti uji; pemeriksaan input fisik manual dicatat `not-run`).
-- **Laporan terbaru:** [014 — Spike evaluasi backend emulator AVR](docs/reports/014-phase-3-avr-backend-spike.md).
+- **Laporan terbaru:** [015 — Integrasi editor kode, Serial Monitor, dan `arduino_cli.rs`](docs/reports/015-phase-3-editor-serial-and-arduino-cli.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Fase 3 Langkah 2 — integrasi Monaco Editor, Serial Monitor, dan `arduino_cli.rs` (`not-started`).
+- **Langkah berikutnya:** Fase 3 Langkah 3 — implementasi trait `Microcontroller` dan `avr_uno.rs` (`not-started`).
 
 ## Ringkasan roadmap
 
@@ -18,7 +18,7 @@ Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint
 | --- | --- | --- |
 | 1 — Fondasi dan kanvas | `completed` | Scaffold Tauri v2 + SolidJS, loader `.nodpkg` v1, katalog, kanvas pan/zoom/snap/drag, `WireLayer.tsx` Manhattan, dan netlist Rust (`circuit_graph.rs`) lulus 56 tes Rust, 24 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 2 — Mesin simulasi dan Lua | `completed` | `SimTime` half-ns, `Scheduler`, resolusi net digital, sandbox Lua 5.4 (`mlua`), streamer biner `NDFR` 60 Hz, `basic-power-source`/`basic-pushbutton`/`basic-led`, lulus 70 tes Rust, 26 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
-| 3 — Editor, compiler, dan AVR | `in-progress` | Langkah 1 selesai: spike evaluasi `simavr` vs `avr-emulator = "=0.1.2"` terdokumentasi di `docs/avr-backend-spike.md` dan disetujui pengguna |
+| 3 — Editor, compiler, dan AVR | `in-progress` | Langkah 1–2 selesai: spike backend AVR (`avr-emulator 0.1.2`), `arduino-cli 1.5.1` + `arduino:avr@1.8.8`, `arduino_cli.rs`, `uart.rs`, `CodeEditor.tsx`, dan `SerialMonitor.tsx` lulus 72 tes Rust dan 26 tes Node |
 | 4 — Sensor, bus, dan MQTT | `not-started` | Menunggu Fase 3 selesai dan teruji |
 | 5 — Penyimpanan dan distribusi | `not-started` | Menunggu Fase 4 selesai dan teruji |
 
@@ -78,5 +78,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [012 — Fase 2: protokol frame biner dan frame streamer](docs/reports/012-phase-2-binary-frame-streamer.md)
 - [013 — Fase 2: komponen bawaan dan runtime simulasi](docs/reports/013-phase-2-builtin-components-and-simulation-runtime.md)
 - [014 — Fase 3: spike evaluasi backend emulator AVR](docs/reports/014-phase-3-avr-backend-spike.md)
+- [015 — Fase 3: integrasi editor kode, Serial Monitor, dan `arduino_cli.rs`](docs/reports/015-phase-3-editor-serial-and-arduino-cli.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `015` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `016` (periksa ulang sebelum membuat file).

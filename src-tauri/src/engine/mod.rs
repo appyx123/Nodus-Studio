@@ -1,3 +1,4 @@
+pub mod bus;
 pub mod circuit_graph;
 pub mod pin;
 pub mod runtime;

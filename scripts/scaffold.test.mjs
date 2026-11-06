@@ -51,6 +51,9 @@ test("catalog grants only local discovery and retains a production CSP", () => {
     "allow-get-simulation-frame",
     "allow-control-simulation",
     "allow-set-control-value",
+    "allow-compile-sketch",
+    "allow-cancel-compilation",
+    "allow-serial-io",
   ]);
   assert.deepEqual(config.bundle.resources, { "../components-registry/": "components-registry/" });
   assert.ok(config.app.security.csp.includes("default-src 'self'"));

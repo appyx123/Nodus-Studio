@@ -1,6 +1,6 @@
 {
   "identifier": "main-components",
-  "description": "Read validated built-in components, edit session circuit topology, and run simulation in the local main window.",
+  "description": "Read validated built-in components, edit session circuit topology, compile firmware, and run simulation in the local main window.",
   "local": true,
   "windows": ["main"],
   "permissions": [
@@ -9,6 +9,9 @@
     "allow-edit-circuit",
     "allow-get-simulation-frame",
     "allow-control-simulation",
-    "allow-set-control-value"
+    "allow-set-control-value",
+    "allow-compile-sketch",
+    "allow-cancel-compilation",
+    "allow-serial-io"
   ]
 }

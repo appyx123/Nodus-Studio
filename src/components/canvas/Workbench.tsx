@@ -1,7 +1,10 @@
 import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import type { Resource } from "solid-js";
 import { connectedNetCount, editCircuit, EMPTY_CIRCUIT, sameEndpoint, WIRE_COLORS } from "../../store/circuitStore";
+import { editorOpen, setEditorOpen } from "../../store/editorStore";
 import type { CircuitEdit, CircuitSnapshot, ComponentPackage, Endpoint, RegistryCatalog, WireColor } from "../../types/nodpkg";
+import CodeEditor from "../editor/CodeEditor";
+import SerialMonitor from "../editor/SerialMonitor";
 import ComponentCatalog from "../library/ComponentCatalog";
 import { dragPosition, GRID, MAX_ZOOM, MIN_ZOOM, pinWorldPoint, screenToWorld, snapPoint, zoomAt } from "./geometry";
 import type { Point, Viewport } from "./geometry";
@@ -299,6 +302,8 @@ export default function Workbench(props: Props) {
             <button class={buttonClass} onClick={() => { if (!gesture) setViewport(initialView()); }}>Reset view</button>
             <button class={buttonClass} disabled={!selected() && !selectedWire()}
               onClick={() => { void removeSelected(); }}>Delete selected</button>
+            <button class={buttonClass} aria-pressed={editorOpen()}
+              onClick={() => setEditorOpen((open) => !open)}>Firmware &amp; Serial</button>
           </div>
         </div>
         <div class="workbench-stage">
@@ -372,6 +377,12 @@ export default function Workbench(props: Props) {
           <p class="sr-only" role="status">{message()}</p>
         </div>
       </main>
+      <Show when={editorOpen()}>
+        <aside aria-label="Firmware and serial panel" class="editor-sidebar">
+          <CodeEditor onStatus={setMessage} onError={setErrorMessage} />
+          <SerialMonitor />
+        </aside>
+      </Show>
     </div>
   );
 }

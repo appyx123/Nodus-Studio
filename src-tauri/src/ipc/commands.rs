@@ -1,6 +1,8 @@
 use super::circuit::{self, ManagedCircuit};
 use super::frame_streamer::FrameStreamer;
 use super::simulation::{SimulationAction, SimulationController, SimulationStatus};
+use crate::compiler::{CompileRequest, CompileResponse, CompilerController};
+use crate::engine::bus::{SerialBuffer, SerialRequest, SerialSnapshot};
 use crate::engine::{CircuitEdit, CircuitSnapshot};
 use crate::sandbox::pkg_loader::{scan_registry, RegistryCatalog};
 use crate::NodusError;
@@ -81,6 +83,33 @@ pub async fn set_control_value(
     value: f64,
 ) -> Result<SimulationStatus, NodusError> {
     controller.set_control_value(instance_id, control_id, value)
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn compile_sketch(
+    compiler: tauri::State<'_, Arc<CompilerController>>,
+    request: CompileRequest,
+) -> Result<CompileResponse, NodusError> {
+    let compiler = Arc::clone(&compiler);
+    tauri::async_runtime::spawn_blocking(move || compiler.compile(request))
+        .await
+        .map_err(|error| NodusError::Worker(error.to_string()))?
+}
+
+#[tauri::command]
+pub async fn cancel_compilation(
+    compiler: tauri::State<'_, Arc<CompilerController>>,
+) -> Result<(), NodusError> {
+    compiler.cancel();
+    Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn serial_io(
+    serial: tauri::State<'_, Arc<SerialBuffer>>,
+    request: SerialRequest,
+) -> Result<SerialSnapshot, NodusError> {
+    serial.handle_request(request)
 }
 
 #[cfg(test)]
