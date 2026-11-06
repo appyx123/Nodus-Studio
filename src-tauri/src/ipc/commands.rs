@@ -1,4 +1,5 @@
 use super::circuit::{self, ManagedCircuit};
+use super::frame_streamer::FrameStreamer;
 use crate::engine::{CircuitEdit, CircuitSnapshot};
 use crate::sandbox::pkg_loader::{scan_registry, RegistryCatalog};
 use crate::NodusError;
@@ -45,6 +46,13 @@ pub async fn edit_circuit(
     edit: CircuitEdit,
 ) -> Result<CircuitSnapshot, NodusError> {
     circuit::edit(&state, edit)
+}
+
+#[tauri::command]
+pub async fn get_simulation_frame(
+    streamer: tauri::State<'_, FrameStreamer>,
+) -> Result<tauri::ipc::Response, NodusError> {
+    streamer.read_latest_bytes().map(tauri::ipc::Response::new)
 }
 
 #[cfg(test)]
