@@ -1,4 +1,7 @@
-use super::{CircuitEdit, CircuitSnapshot, Endpoint, InstanceSnapshot, Net, Wire};
+use super::{
+    pin::{resolve_net, LogicLevel, NetState, PinMode, PinRuntime},
+    CircuitEdit, CircuitSnapshot, Endpoint, InstanceSnapshot, Net, Wire,
+};
 use crate::sandbox::{
     manifest::{Pin, PinType},
     pkg_loader::RegistryCatalog,
@@ -20,6 +23,7 @@ struct Instance {
     component_id: String,
     component_version: String,
     pins: Pins,
+    runtime: BTreeMap<String, PinRuntime>,
 }
 
 /// Session topology only: no filesystem, presentation coordinates, or simulation.
@@ -94,10 +98,16 @@ impl CircuitState {
                         "Unsupported component version: {component_id}@{component_version}"
                     )));
                 }
+                let runtime = definition
+                    .pins
+                    .keys()
+                    .map(|pin_id| (pin_id.clone(), PinRuntime::default()))
+                    .collect();
                 let instance = Instance {
                     component_id,
                     component_version,
                     pins: definition.pins.clone(),
+                    runtime,
                 };
                 self.instances.insert(instance_id, instance);
             }
@@ -232,6 +242,78 @@ impl CircuitState {
             });
         }
         nets
+    }
+
+    pub fn set_pin_mode(&mut self, endpoint: &Endpoint, mode: PinMode) -> Result<(), NodusError> {
+        self.validate_endpoint(endpoint)?;
+        let instance = self
+            .instances
+            .get_mut(&endpoint.instance_id)
+            .ok_or_else(|| circuit(format!("Unknown instance: {}", endpoint.instance_id)))?;
+        if let Some(pin) = instance.runtime.get_mut(&endpoint.pin_id) {
+            pin.mode = mode;
+        }
+        Ok(())
+    }
+
+    pub fn set_pin_output(&mut self, endpoint: &Endpoint, high: bool) -> Result<(), NodusError> {
+        self.validate_endpoint(endpoint)?;
+        let instance = self
+            .instances
+            .get_mut(&endpoint.instance_id)
+            .ok_or_else(|| circuit(format!("Unknown instance: {}", endpoint.instance_id)))?;
+        if let Some(pin) = instance.runtime.get_mut(&endpoint.pin_id) {
+            pin.output_high = high;
+        }
+        Ok(())
+    }
+
+    pub fn release_instance_pins(&mut self, instance_id: &str) -> Result<(), NodusError> {
+        validate_id(instance_id, "node-")?;
+        let instance = self
+            .instances
+            .get_mut(instance_id)
+            .ok_or_else(|| circuit(format!("Unknown instance: {instance_id}")))?;
+        for pin in instance.runtime.values_mut() {
+            *pin = PinRuntime::default();
+        }
+        Ok(())
+    }
+
+    pub fn reset_all_pins(&mut self) {
+        for instance in self.instances.values_mut() {
+            for pin in instance.runtime.values_mut() {
+                *pin = PinRuntime::default();
+            }
+        }
+    }
+
+    pub fn resolve_nets(&self) -> Vec<NetState> {
+        self.nets()
+            .into_iter()
+            .map(|net| {
+                let items = net.endpoints.iter().map(|endpoint| {
+                    let runtime = self
+                        .instances
+                        .get(&endpoint.instance_id)
+                        .and_then(|inst| inst.runtime.get(&endpoint.pin_id))
+                        .copied()
+                        .unwrap_or_default();
+                    (endpoint, runtime)
+                });
+                resolve_net(items)
+            })
+            .collect()
+    }
+
+    pub fn read_pin(&self, endpoint: &Endpoint) -> Result<LogicLevel, NodusError> {
+        self.validate_endpoint(endpoint)?;
+        for net in self.resolve_nets() {
+            if net.endpoints.contains(endpoint) {
+                return Ok(net.state);
+            }
+        }
+        Ok(LogicLevel::HighZ)
     }
 }
 

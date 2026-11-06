@@ -4,13 +4,13 @@
 
 Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint tetap menjadi sumber kebenaran persyaratan; file ini merangkum keadaan implementasi.
 
-- **Fase aktif:** Fase 1 — Fondasi Aplikasi & Kanvas Interaktif (`completed`). Siap memasuki Fase 2.
-- **Subtahap terakhir:** Fase 1 Langkah 4 — kabel Manhattan dan netlist authoritative Rust (`completed`).
+- **Fase aktif:** Fase 2 — Mesin Simulasi Inti & Sandbox Komponen Lua (`in-progress`).
+- **Subtahap terakhir:** Fase 2 Langkah 1 — scheduler deterministik dan resolusi net digital (`completed`).
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 1 telah memiliki bukti uji; pemeriksaan input fisik manual dicatat `not-run`).
-- **Laporan terbaru:** [009 — Kabel Manhattan dan netlist authoritative Rust](docs/reports/009-phase-1-wiring-and-netlist.md).
+- **Laporan terbaru:** [010 — Scheduler deterministik dan resolusi net digital](docs/reports/010-phase-2-scheduler-and-net-resolution.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Fase 2 Langkah 1 — representasi waktu presisi, `scheduler.rs`, `pin.rs`, dan resolusi net digital pada `circuit_graph.rs` (`not-started`).
+- **Langkah berikutnya:** Fase 2 Langkah 2 — kontrak API Lua v1 dan sandbox di `lua_host.rs` (`in-progress`).
 
 ## Ringkasan roadmap
 
@@ -73,5 +73,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [007 — Fase 1: penyegaran README open source](docs/reports/007-phase-1-readme-refresh.md)
 - [008 — Fase 1: kanvas interaktif dan instance komponen](docs/reports/008-phase-1-interactive-workbench.md)
 - [009 — Fase 1: kabel Manhattan dan netlist authoritative Rust](docs/reports/009-phase-1-wiring-and-netlist.md)
+- [010 — Fase 2: scheduler deterministik dan resolusi net digital](docs/reports/010-phase-2-scheduler-and-net-resolution.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `010` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `011` (periksa ulang sebelum membuat file).
