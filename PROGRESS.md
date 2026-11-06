@@ -9,7 +9,8 @@ Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint
 - **Status subtahap:** `completed`; loader/katalog dan smoke test terbatas terverifikasi pada laporan 005.
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `in-progress`; kanvas interaktif, kabel, dan netlist belum dikerjakan.
-- **Laporan terbaru:** [005 — Kontrak paket, loader, dan katalog](docs/reports/005-phase-1-component-loader.md).
+- **Laporan terbaru:** [006 — Publikasi repository GitHub](docs/reports/006-phase-1-github-publication.md). Bukti implementasi/tes Langkah 2 tetap pada [laporan 005](docs/reports/005-phase-1-component-loader.md).
+- **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`; publikasi implementasi `10dd73b` terverifikasi.
 - **Langkah berikutnya:** Fase 1 Langkah 3 — renderer/kanvas interaktif (`not-started` untuk kanvas; katalog sudah tersedia).
 
 ## Ringkasan roadmap
@@ -55,7 +56,7 @@ Stack tetap SolidJS 1.9.18, TypeScript 7.0.2, Vite 8.3.6, Tailwind 4.3.4, CLI/AP
 2. Loader menolak symlink dan membatasi read/payload. Unix final-open menolak symlink/FIFO replacement, tetapi traversal parent belum race-proof terhadap hostile concurrent writers. Registry bawaan diasumsikan dikendalikan pemilik aplikasi. Jangan memperluas ke registry tak tepercaya tanpa meninjau batas ini.
 3. SVG sengaja merupakan subset ketat, bukan sanitizer umum. Gradient/filter/transform dan reference belum didukung. Inline renderer mendatang wajib namespace ID per instance; isolasi image katalog saja belum memenuhi acceptance multi-instance kanvas.
 4. Desktop smoke berbasis accessibility membuktikan konten dan pemulihan error, bukan tampilan piksel, seluruh CSP, atau interaksi kanvas. Script memerlukan GNOME/Wayland dan `pyatspi` yang sudah tersedia; tidak memasang paket sendiri.
-5. Workspace tidak memiliki repository Git saat diperiksa; `git status` gagal. Tidak menginisialisasi Git, staging, atau membuat commit/branch.
+5. Repository Git diinisialisasi dan dipublikasikan atas permintaan pengguna pada tahap 006. Riwayat remote dan LICENSE MIT dipertahankan; push implementasi fast-forward tanpa force-push. Jangan menginisialisasi ulang atau membuat commit/push berikutnya tanpa instruksi pengguna.
 6. Rust aktual 1.99.1 terverifikasi, bukan dipatok melalui rustup. Minimum 1.90 dan paket distribusi belum diuji.
 
 ## Tindakan berikutnya
@@ -64,7 +65,7 @@ Stack tetap SolidJS 1.9.18, TypeScript 7.0.2, Vite 8.3.6, Tailwind 4.3.4, CLI/AP
 2. Tambahkan infinite pan/zoom, snap 25.4 unit SVG (2.54 mm), drag-and-drop, dan namespace ID/referensi SVG. Uji beberapa LED identik serta anchor saat viewport/posisi berubah.
 3. Verifikasi interaksi pada desktop target; jangan mengklaim acceptance kanvas dari typecheck saja.
 4. Setelah Langkah 3 selesai, Langkah 4 menambah `WireLayer.tsx` dan netlist Rust: endpoint tervalidasi, routing Manhattan, warna kabel, serta hapus instance/kabel yang memperbarui graf. Belum ada resolusi listrik.
-5. Simpan laporan `006` atau nomor berikutnya yang belum terpakai dan perbarui file ini. Jangan mengubah laporan lama untuk memasukkan hasil baru.
+5. Simpan laporan `007` atau nomor berikutnya yang belum terpakai dan perbarui file ini. Jangan mengubah laporan lama untuk memasukkan hasil baru.
 
 ## Laporan
 
@@ -74,4 +75,6 @@ Stack tetap SolidJS 1.9.18, TypeScript 7.0.2, Vite 8.3.6, Tailwind 4.3.4, CLI/AP
 - [004 — Fase 1: build native debug dan smoke test desktop](docs/reports/004-phase-1-native-build-smoke.md)
 - [005 — Fase 1: kontrak paket, loader, dan katalog](docs/reports/005-phase-1-component-loader.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `006` (periksa ulang sebelum membuat file).
+- [006 — Fase 1: publikasi repository GitHub](docs/reports/006-phase-1-github-publication.md)
+
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `007` (periksa ulang sebelum membuat file).
