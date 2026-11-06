@@ -70,9 +70,17 @@ pub async fn control_simulation(
     controller: tauri::State<'_, SimulationController>,
     circuit: tauri::State<'_, ManagedCircuit>,
     streamer: tauri::State<'_, Arc<FrameStreamer>>,
+    compiler: tauri::State<'_, Arc<CompilerController>>,
+    serial: tauri::State<'_, Arc<SerialBuffer>>,
     action: SimulationAction,
 ) -> Result<SimulationStatus, NodusError> {
-    controller.control(action, &circuit, &streamer)
+    controller.control_with_context(
+        action,
+        &circuit,
+        &streamer,
+        Some(Arc::clone(&compiler)),
+        Some(Arc::clone(&serial)),
+    )
 }
 
 #[tauri::command(rename_all = "snake_case")]

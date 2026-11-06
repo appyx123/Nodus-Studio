@@ -2,6 +2,7 @@ pub mod compiler;
 pub mod engine;
 mod error;
 pub mod ipc;
+pub mod mcu;
 pub mod sandbox;
 
 pub use error::NodusError;

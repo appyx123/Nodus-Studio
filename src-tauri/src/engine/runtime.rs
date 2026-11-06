@@ -1,12 +1,21 @@
-use super::{CircuitState, Endpoint, EventPayload, LogicLevel, ScheduledEvent, Scheduler, SimTime};
+use super::{
+    bus::SerialBuffer,
+    scheduler::{RunState, HALF_NS_PER_16MHZ_CYCLE},
+    CircuitState, Endpoint, EventPayload, LogicLevel, PinMode, ScheduledEvent, Scheduler, SimTime,
+};
+use crate::mcu::Microcontroller;
 use crate::sandbox::lua_host::{HostResult, InstanceDiagnostic, LuaSandboxInstance};
 use crate::NodusError;
 use std::collections::BTreeMap;
 
-/// Single-threaded simulation core: Lua instances, scheduler and edge detection.
+const MCU_SLICE_CYCLES: u64 = 1_600;
+
+/// Single-threaded simulation core: Lua instances, MCU cores, scheduler, and edge detection.
 /// Lua states are not `Send`, so the owner must create and use this on one thread.
 pub struct SimulationRuntime {
     instances: BTreeMap<String, LuaSandboxInstance>,
+    mcus: BTreeMap<String, Box<dyn Microcontroller>>,
+    mcu_time: SimTime,
     scheduler: Scheduler,
     levels: BTreeMap<Endpoint, LogicLevel>,
     diagnostics: Vec<InstanceDiagnostic>,
@@ -20,6 +29,8 @@ impl SimulationRuntime {
         scheduler.start();
         let mut runtime = Self {
             instances: BTreeMap::new(),
+            mcus: BTreeMap::new(),
+            mcu_time: SimTime::ZERO,
             scheduler,
             levels: BTreeMap::new(),
             diagnostics: Vec::new(),
@@ -39,6 +50,17 @@ impl SimulationRuntime {
         }
         runtime.detect_edges(circuit)?;
         Ok(runtime)
+    }
+
+    pub fn attach_mcu(
+        &mut self,
+        instance_id: String,
+        mut mcu: Box<dyn Microcontroller>,
+        circuit: &mut CircuitState,
+    ) -> Result<(), NodusError> {
+        sync_mcu_to_circuit(&instance_id, mcu.as_mut(), circuit);
+        self.mcus.insert(instance_id, mcu);
+        self.detect_edges(circuit)
     }
 
     pub fn now(&self) -> SimTime {
@@ -68,18 +90,87 @@ impl SimulationRuntime {
             .map(|(id, inst)| (id.as_str(), inst.fault().is_some(), inst.visual_values()))
     }
 
-    /// Processes all events up to `now + delta`. No-op while paused.
+    /// Processes all events up to `now + delta`, stepping attached MCUs in lockstep.
     pub fn advance(
         &mut self,
         circuit: &mut CircuitState,
         delta: SimTime,
     ) -> Result<(), NodusError> {
+        self.advance_with_serial(circuit, delta, None)
+    }
+
+    pub fn advance_with_serial(
+        &mut self,
+        circuit: &mut CircuitState,
+        delta: SimTime,
+        serial: Option<&SerialBuffer>,
+    ) -> Result<(), NodusError> {
+        if self.scheduler.state() != RunState::Running {
+            return Ok(());
+        }
         let target = self.scheduler.now().checked_add(delta)?;
+        if self.mcus.is_empty() {
+            while let Some(event) = self.scheduler.pop_next_until(target)? {
+                self.dispatch(event, circuit);
+                self.detect_edges(circuit)?;
+            }
+            return Ok(());
+        }
+        let slice_delta = SimTime::from_cycles_16mhz(MCU_SLICE_CYCLES)?;
+        while self.scheduler.now() < target {
+            let chunk_end = self.scheduler.now().checked_add(slice_delta)?.min(target);
+            self.step_mcus_until(chunk_end, circuit, serial)?;
+            while let Some(event) = self.scheduler.pop_next_until(chunk_end)? {
+                self.dispatch(event, circuit);
+                self.detect_edges(circuit)?;
+            }
+        }
         while let Some(event) = self.scheduler.pop_next_until(target)? {
             self.dispatch(event, circuit);
             self.detect_edges(circuit)?;
         }
         Ok(())
+    }
+
+    fn step_mcus_until(
+        &mut self,
+        target: SimTime,
+        circuit: &mut CircuitState,
+        serial: Option<&SerialBuffer>,
+    ) -> Result<(), NodusError> {
+        let diff_half_ns = target.half_ns().saturating_sub(self.mcu_time.half_ns());
+        let cycles = diff_half_ns / HALF_NS_PER_16MHZ_CYCLE;
+        if cycles == 0 {
+            return Ok(());
+        }
+        let mut rx_bytes = Vec::new();
+        if let Some(buf) = serial {
+            while let Some(b) = buf.pop_rx_byte() {
+                rx_bytes.push(b);
+            }
+        }
+        let mut actual_cycles = cycles;
+        for (instance_id, mcu) in &mut self.mcus {
+            if !rx_bytes.is_empty() {
+                mcu.push_serial_rx(&rx_bytes);
+            }
+            for (endpoint, &level) in &self.levels {
+                if endpoint.instance_id == *instance_id {
+                    mcu.set_input_pin(&endpoint.pin_id, level);
+                }
+            }
+            actual_cycles = mcu.step_cycles(cycles)?;
+            sync_mcu_to_circuit(instance_id, mcu.as_mut(), circuit);
+            if let Some(buf) = serial {
+                let tx = mcu.drain_serial_tx();
+                if !tx.is_empty() {
+                    buf.push_tx_bytes(&tx);
+                }
+            }
+        }
+        let step_time = SimTime::from_cycles_16mhz(actual_cycles)?;
+        self.mcu_time = self.mcu_time.checked_add(step_time)?;
+        self.detect_edges(circuit)
     }
 
     pub fn set_control(
@@ -102,6 +193,7 @@ impl SimulationRuntime {
 
     /// Drops every instance and event and releases all pins.
     pub fn shutdown(mut self, circuit: &mut CircuitState) {
+        self.mcus.clear();
         self.scheduler.reset();
         circuit.reset_all_pins();
     }
@@ -143,6 +235,9 @@ impl SimulationRuntime {
                     pin_id: pin_id.clone(),
                 };
                 let level = circuit.read_pin(&endpoint).unwrap_or(LogicLevel::HighZ);
+                if let Some(mcu) = self.mcus.get_mut(&instance_id) {
+                    mcu.set_input_pin(&pin_id, level);
+                }
                 self.call(&instance_id, circuit, |inst, c, s| {
                     inst.call_pin_edge(&pin_id, level, timestamp, c, s)
                 });
@@ -180,5 +275,18 @@ impl SimulationRuntime {
         }
         self.levels = current;
         Ok(())
+    }
+}
+
+fn sync_mcu_to_circuit(instance_id: &str, mcu: &dyn Microcontroller, circuit: &mut CircuitState) {
+    for drive in mcu.pin_drives() {
+        let endpoint = Endpoint {
+            instance_id: instance_id.to_owned(),
+            pin_id: drive.pin_id.to_owned(),
+        };
+        let _ = circuit.set_pin_mode(&endpoint, drive.mode);
+        if matches!(drive.mode, PinMode::Output | PinMode::OpenDrain) {
+            let _ = circuit.set_pin_output(&endpoint, drive.level == LogicLevel::High);
+        }
     }
 }
