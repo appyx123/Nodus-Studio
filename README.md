@@ -17,7 +17,7 @@ Modular components. A Rust-powered foundation. An open ecosystem.
 
 ---
 
-> **Early development — not yet a working circuit simulator.** The desktop foundation, validated component loader, catalog, and visual placement canvas are implemented. Wiring, simulation, and firmware execution are still on the roadmap. There is no verified release package yet.
+> **Early development — not yet a working circuit simulator.** Phase 1 (desktop foundation, validated component loader, catalog, interactive placement canvas, Manhattan wiring, and Rust-owned session netlist) is implemented. Electrical simulation, Lua component execution, and firmware emulation are still on the roadmap. There is no verified release package yet.
 
 ## Why Nodus?
 
@@ -42,8 +42,8 @@ Nodus Studio aims to bring intuitive circuit building and deeper IoT emulation i
 | Layer | Technology | Responsibility |
 | --- | --- | --- |
 | Desktop shell | Tauri v2 + WebKitGTK | Native window, local IPC, resource discovery |
-| Backend | Rust | Package validation today; topology and simulation in later steps |
-| Interface | SolidJS + TypeScript | Reactive catalog and visual workbench interactions |
+| Backend | Rust | Package validation and authoritative session netlist; simulation in Phase 2+ |
+| Interface | SolidJS + TypeScript | Reactive catalog, interactive canvas, and Manhattan wire layer |
 | Tooling and styles | Vite + Tailwind CSS v4 | Frontend builds and dark-first UI |
 | Component graphics | Validated SVG | Isolated catalog previews and namespaced inline canvas instances |
 
@@ -51,7 +51,7 @@ Nodus Studio aims to bring intuitive circuit building and deeper IoT emulation i
 
 ## Project status
 
-**Phase 1 · Foundation and interactive canvas · `in-progress`**
+**Phase 1 · Foundation and interactive canvas · `completed`**
 
 ### Available today
 
@@ -61,15 +61,16 @@ Nodus Studio aims to bring intuitive circuit building and deeper IoT emulation i
 - A restricted SVG allowlist with normalized output and bounded file/catalog sizes.
 - A complete **Red LED** fixture with an isolated catalog preview and multiple namespaced canvas instances.
 - Visual placement by Add or drag-and-drop, unbounded panning, cursor-anchored zoom (20–400%), and 2.54 mm snap-to-grid.
-- Selection, keyboard nudging, and deletion. Placement is session-only, with a 256-instance cap.
-- Package-level diagnostics, catalog Reload, and recovery from a missing registry.
-- A narrow local discovery command; no frontend-supplied filesystem paths.
+- Pin-to-pin Manhattan wiring (`WireLayer.tsx`), five wire colors (`green`, `blue`, `amber`, `red`, `violet`), and an authoritative Rust-owned topology/netlist (`circuit_graph.rs`) supporting up to 256 instances and 1,024 wires.
+- Selection, keyboard nudging, and deletion for instances and wires with automatic net updates and cascading wire removal.
+- Package-level diagnostics, catalog Reload, and recovery from a missing registry while preserving existing session topology.
+- Narrow local IPC commands (`list_components`, `get_circuit`, `edit_circuit`); no frontend-supplied filesystem paths.
 
 ### Not available yet
 
-Wiring, a Rust-owned netlist, project persistence, Lua execution, live electrical simulation, firmware editing, or MCU emulation.
+Project persistence, Lua execution, live electrical simulation, scheduler, firmware editing, or MCU emulation.
 
-**Recorded verification:** 34 Rust tests, 20 Node tests, frontend typecheck/build, Rust formatting, Clippy, and native debug build passed. Real WebKitGTK DOM checks cover hit-testing, multi-instance ID isolation, pin geometry, pan/zoom/drag/drop, cancellation, keyboard focus, and browser fallback. Native Fedora GNOME/Wayland accessibility checks cover resource discovery, Add, zoom/reset, deletion, and catalog error recovery. See [canvas report 008](docs/reports/008-phase-1-interactive-workbench.md) and [loader report 005](docs/reports/005-phase-1-component-loader.md).
+**Recorded verification:** 56 Rust tests, 24 Node tests, frontend typecheck/build, Rust formatting, Clippy, and native debug build passed. Real WebKitGTK DOM checks cover hit-testing, multi-instance ID isolation, pin geometry, pan/zoom/drag/drop, cancellation, keyboard focus, Manhattan wiring, net counts, wire recoloring, endpoint movement, cascading wire deletion, and browser fallback. Native Fedora GNOME/Wayland accessibility checks cover resource discovery, Add, pin wiring, wire color changes, wire/instance deletion, zoom/reset, and catalog error recovery. See [wiring/netlist report 009](docs/reports/009-phase-1-wiring-and-netlist.md), [canvas report 008](docs/reports/008-phase-1-interactive-workbench.md), and [loader report 005](docs/reports/005-phase-1-component-loader.md).
 
 The WebKit interaction harness mocks only discovery and dispatches synthetic input. Physical drag/drop and trusted pointer capture still need a manual desktop check.
 
@@ -120,13 +121,15 @@ Already in the project workspace? Skip the clone and `cd` commands. The first na
 | --- | --- |
 | Place a component | Click **Add to canvas**, or drag that button onto the canvas |
 | Move an instance | Drag its painted body; position snaps to the grid |
+| Connect pins | Click pin A then pin B on the canvas (or use the selected instance's **Pin** buttons); press Escape to cancel |
+| Change wire color | Click a color button (**Green**, **Blue**, **Amber**, **Red**, **Violet**) before wiring or while a wire is selected |
 | Pan | Drag empty canvas space, or middle-drag |
 | Zoom | Scroll over the canvas, or use the zoom buttons |
 | Nudge | Focus an instance with Tab, then use arrow keys |
-| Select / delete | Click or focus an instance; use **Delete selected**, Delete, or Backspace |
-| Restore viewport | Click **Reset view**; instances are not removed |
+| Select / delete | Click or focus an instance or wire; use **Delete selected**, Delete, or Backspace |
+| Restore viewport | Click **Reset view**; instances and wires are not removed |
 
-**Placement is not saved.** Closing or reloading the app clears the canvas. Library Reload refreshes discovery without deleting existing placements. No pins are connected and no hardware behavior runs yet.
+**Topology is session-only.** Closing or reloading the app clears the canvas. Library Reload refreshes discovery without deleting existing instances or wires. No electrical simulation or Lua behavior runs in Phase 1.
 
 ### Preview the frontend only
 
@@ -206,13 +209,13 @@ Read the [package contract](docs/nodpkg-v1.md), inspect the [LED manifest](compo
 
 | Phase | Scope | Status |
 | --- | --- | --- |
-| **1 · Visual foundation** | Desktop shell, package loader, catalog, interactive canvas, wiring, Rust netlist | **In progress** — foundation, loader, catalog, and visual canvas implemented |
+| **1 · Visual foundation** | Desktop shell, package loader, catalog, interactive canvas, wiring, Rust netlist | **Completed** — foundation, loader, catalog, interactive canvas, Manhattan wiring, and Rust netlist verified |
 | **2 · Simulation core** | Deterministic scheduler, digital net resolution, Lua sandbox, binary visual frames | Not started |
 | **3 · Firmware workflow** | AVR backend spike, Monaco, `arduino-cli`, first MCU integration | Not started |
 | **4 · IoT components** | Sensors, displays, actuators, I2C/SPI, opt-in MQTT bridge | Not started |
 | **5 · Polish and distribution** | Versioned project files, logic analyzer, RPM/Flatpak packaging | Not started |
 
-**Next milestone:** pin-to-pin wires with Manhattan routing and color selection, backed by a Rust-owned topology/netlist. Component and wire deletion must keep the graph consistent before Phase 1 can be completed.
+**Next milestone:** Phase 2 — deterministic clock scheduler (`scheduler.rs`), digital pin/net resolution (`pin.rs`, `circuit_graph.rs`), isolated Lua component sandbox (`lua_host.rs`), 60 Hz binary visual frame streamer (`frame_streamer.rs`), and interactive power/pushbutton/LED packages.
 
 Phases have explicit acceptance gates. Planned features are not release commitments. The MVP is not a general analog/SPICE solver; ESP32 emulation is outside the current deliverables.
 
@@ -246,6 +249,7 @@ Bug reports are most useful with your OS/session, tool versions, reproduction st
 - [Architecture and acceptance criteria](master_project_blueprint_ai_context_specification.md)
 - [Current progress and next actions](PROGRESS.md)
 - [Component package contract](docs/nodpkg-v1.md)
+- [Wiring and netlist implementation](docs/reports/009-phase-1-wiring-and-netlist.md)
 - [Canvas implementation and verification](docs/reports/008-phase-1-interactive-workbench.md)
 - [Loader implementation and verification](docs/reports/005-phase-1-component-loader.md)
 - [Stage report archive](docs/reports/)

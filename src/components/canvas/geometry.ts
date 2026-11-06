@@ -52,3 +52,37 @@ export function dragPosition(
     y: startPosition.y + (currentScreen.y - startScreen.y) / viewport.zoom,
   });
 }
+
+export function pinWorldPoint(
+  instancePosition: Point,
+  localPin: Point,
+  viewBoxOrigin: Point = { x: 0, y: 0 },
+): Point {
+  const round = (value: number) => Number(value.toFixed(4)) || 0;
+  return {
+    x: round(instancePosition.x + localPin.x - viewBoxOrigin.x),
+    y: round(instancePosition.y + localPin.y - viewBoxOrigin.y),
+  };
+}
+
+export function manhattanRoute(a: Point, b: Point): Point[] {
+  const round = (value: number) => Number(value.toFixed(4)) || 0;
+  const start = { x: round(a.x), y: round(a.y) };
+  const end = { x: round(b.x), y: round(b.y) };
+  if (start.x === end.x || start.y === end.y) {
+    return [start, end];
+  }
+  const midX = round((start.x + end.x) / 2);
+  return [
+    start,
+    { x: midX, y: start.y },
+    { x: midX, y: end.y },
+    end,
+  ];
+}
+
+export function manhattanPath(a: Point, b: Point): string {
+  return manhattanRoute(a, b)
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+    .join(" ");
+}

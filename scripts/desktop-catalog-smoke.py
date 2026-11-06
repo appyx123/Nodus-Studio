@@ -66,7 +66,8 @@ def contains(records, value):
 
 
 def activate(records, label):
-    button = next(item for item, role, name, _ in records if role == "button" and name == label)
+    button = next(item for item, role, name, _ in records
+                  if role in ("button", "toggle button") and name == label)
     assert button.queryAction().doAction(0), f"Could not activate {label}"
 
 
@@ -106,18 +107,40 @@ def main():
             print("PASS: isolated SVG preview and its content are exposed to accessibility", flush=True)
 
             activate(records, "Add Red LED")
-            records = wait_for(process, lambda rows: contains(rows, "1 instance(s)"), "native Add places the first LED")
+            records = wait_for(process, lambda rows: contains(rows, "1 instance(s)")
+                               and contains(rows, "2 net(s)"), "native Add places the first LED and registers pins")
+            first_names = [name for _, _, name, _ in records if name.startswith("Red LED instance node-")]
+            assert len(first_names) == 1, f"Expected first instance name: {first_names!r}"
+            first_id = first_names[0].removeprefix("Red LED instance ")
+            activate(records, f"Pin A on {first_id}")
+            records = wait_for(process, lambda rows: contains(rows, f"Wiring from {first_id}.A"),
+                               "native pin action starts wiring from first LED")
             activate(records, "Add Red LED")
-            records = wait_for(process, lambda rows: contains(rows, "2 instance(s)"), "native Add places a second LED")
+            records = wait_for(process, lambda rows: contains(rows, "2 instance(s)")
+                               and contains(rows, "4 net(s)"), "native Add places a second LED")
             names = {name for _, _, name, _ in records if name.startswith("Red LED instance node-")}
             assert len(names) == 2, f"Expected two separately named instances: {names!r}"
             print("PASS: two native canvas instances have distinct accessible identities", flush=True)
+            second_id = next(name.removeprefix("Red LED instance ") for name in names
+                             if name != first_names[0])
+            activate(records, f"Pin K on {second_id}")
+            records = wait_for(process, lambda rows: contains(rows, "1 wire(s)")
+                               and contains(rows, "3 net(s) (1 connected)"),
+                               "native second pin action connects wire and merges net")
+            activate(records, "Wire color Amber")
+            records = wait_for(process, lambda rows: contains(rows, "(amber)"),
+                               "native wire color control updates the wire color")
             activate(records, "Zoom out")
             records = wait_for(process, lambda rows: contains(rows, "160%"), "native zoom control changes the viewport")
             activate(records, "Reset view")
             records = wait_for(process, lambda rows: contains(rows, "200%"), "native Reset view restores zoom")
             activate(records, "Delete selected")
+            records = wait_for(process, lambda rows: contains(rows, "0 wire(s)")
+                               and contains(rows, "4 net(s) (0 connected)"),
+                               "native Delete selected removes the selected wire and splits the net")
+            activate(records, "Delete selected")
             records = wait_for(process, lambda rows: contains(rows, "1 instance(s)")
+                               and contains(rows, "2 net(s)")
                                and not contains(rows, "2 instance(s)"), "native deletion removes only the selected instance")
 
             shutil.rmtree(invalid)

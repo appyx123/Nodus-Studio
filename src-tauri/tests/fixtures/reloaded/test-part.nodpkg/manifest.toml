@@ -1,0 +1,23 @@
+schema_version = 1
+[compatibility]
+engine_api = 1
+[component]
+id = "test-part"
+name = "Changed topology fixture"
+category = "Tests"
+author = "Nodus"
+version = "2.0.0"
+description = "Removes z, adds B, and changes A to NC."
+[electrical]
+operating_voltage_min = 0.0
+operating_voltage_max = 5.0
+[[pins]]
+id = "A"
+name = "Now disconnected"
+type = "nc"
+svg_anchor = "pin-a"
+[[pins]]
+id = "B"
+name = "New terminal"
+type = "input"
+svg_anchor = "pin-b"

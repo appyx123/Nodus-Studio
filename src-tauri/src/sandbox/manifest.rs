@@ -39,7 +39,7 @@ pub struct Electrical {
     pub operating_voltage_max: f64,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Pin {
     pub id: String,
@@ -49,7 +49,7 @@ pub struct Pin {
     pub svg_anchor: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PinType {
     Input,

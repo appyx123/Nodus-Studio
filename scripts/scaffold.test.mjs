@@ -44,7 +44,11 @@ test("catalog grants only local discovery and retains a production CSP", () => {
   assert.equal(capability.local, true);
   assert.equal(capability.remote, undefined);
   assert.deepEqual(capability.windows, ["main"]);
-  assert.deepEqual(capability.permissions, ["allow-list-components"]);
+  assert.deepEqual(capability.permissions, [
+    "allow-list-components",
+    "allow-get-circuit",
+    "allow-edit-circuit",
+  ]);
   assert.deepEqual(config.bundle.resources, { "../components-registry/": "components-registry/" });
   assert.ok(config.app.security.csp.includes("default-src 'self'"));
   assert.ok(config.app.security.csp.includes("object-src 'none'"));

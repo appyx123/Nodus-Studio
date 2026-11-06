@@ -74,14 +74,115 @@ class Smoke:
         if mode == "mocked-discovery":
             boundary = """
                 globalThis.isTauri = true;
-                globalThis.__TAURI_INTERNALS__ = {
-                    invoke: async (command) => {
-                        if (command !== 'list_components') {
-                            throw new Error('Unexpected mocked IPC command: ' + command);
+                (() => {
+                    const catalog = CATALOG;
+                    const instances = new Map();
+                    const wires = new Map();
+                    const computeNets = () => {
+                        const adj = new Map();
+                        const keyOf = (ep) => `${ep.instance_id}::${ep.pin_id}`;
+                        for (const [id, inst] of instances.entries()) {
+                            for (const pin of inst.pins) {
+                                adj.set(keyOf({ instance_id: id, pin_id: pin }), new Set());
+                            }
                         }
-                        return CATALOG;
-                    }
-                };
+                        for (const w of wires.values()) {
+                            adj.get(keyOf(w.a))?.add(keyOf(w.b));
+                            adj.get(keyOf(w.b))?.add(keyOf(w.a));
+                        }
+                        const unseen = new Set([...adj.keys()].sort());
+                        const nets = [];
+                        while (unseen.size > 0) {
+                            const start = unseen.values().next().value;
+                            const pending = [start];
+                            const group = [];
+                            while (pending.length > 0) {
+                                const cur = pending.shift();
+                                if (!unseen.delete(cur)) continue;
+                                group.push(cur);
+                                for (const next of adj.get(cur) || []) {
+                                    if (unseen.has(next)) pending.push(next);
+                                }
+                            }
+                            group.sort();
+                            nets.push({
+                                endpoints: group.map((item) => {
+                                    const [instance_id, pin_id] = item.split('::');
+                                    return { instance_id, pin_id };
+                                }),
+                            });
+                        }
+                        return nets;
+                    };
+                    const snapshot = () => ({
+                        instances: [...instances.values()],
+                        wires: [...wires.values()],
+                        nets: computeNets(),
+                    });
+                    globalThis.__TAURI_INTERNALS__ = {
+                        invoke: async (command, args) => {
+                            if (command === 'list_components') return catalog;
+                            if (command === 'get_circuit') return snapshot();
+                            if (command !== 'edit_circuit') {
+                                throw new Error('Unexpected mocked IPC command: ' + command);
+                            }
+                            const edit = args?.edit;
+                            if (edit?.type === 'add_instance') {
+                                const pkg = catalog.packages.find(
+                                    (p) => p.manifest.component.id === edit.component_id
+                                        && p.manifest.component.version === edit.component_version
+                                );
+                                if (!pkg || instances.has(edit.instance_id)) {
+                                    throw new Error('Circuit edit failed: invalid add_instance');
+                                }
+                                instances.set(edit.instance_id, {
+                                    instance_id: edit.instance_id,
+                                    component_id: edit.component_id,
+                                    component_version: edit.component_version,
+                                    pins: pkg.manifest.pins.map((p) => p.id).sort(),
+                                });
+                            } else if (edit?.type === 'remove_instance') {
+                                if (!instances.delete(edit.instance_id)) {
+                                    throw new Error('Circuit edit failed: unknown instance');
+                                }
+                                for (const [wid, w] of [...wires.entries()]) {
+                                    if (w.a.instance_id === edit.instance_id || w.b.instance_id === edit.instance_id) {
+                                        wires.delete(wid);
+                                    }
+                                }
+                            } else if (edit?.type === 'connect') {
+                                const key = (a, b) => (
+                                    (a.instance_id === b.instance_id && a.pin_id === b.pin_id)
+                                );
+                                if (key(edit.a, edit.b)) {
+                                    throw new Error('Circuit edit failed: Wire endpoints must be distinct');
+                                }
+                                for (const w of wires.values()) {
+                                    if ((key(w.a, edit.a) && key(w.b, edit.b)) || (key(w.a, edit.b) && key(w.b, edit.a))) {
+                                        throw new Error('Circuit edit failed: Endpoint pair is already connected');
+                                    }
+                                }
+                                wires.set(edit.wire_id, {
+                                    wire_id: edit.wire_id,
+                                    a: edit.a,
+                                    b: edit.b,
+                                    color: edit.color,
+                                });
+                            } else if (edit?.type === 'remove_wire') {
+                                if (!wires.delete(edit.wire_id)) {
+                                    throw new Error('Circuit edit failed: unknown wire');
+                                }
+                            } else if (edit?.type === 'set_wire_color') {
+                                const w = wires.get(edit.wire_id);
+                                if (!w) throw new Error('Circuit edit failed: unknown wire');
+                                w.color = edit.color;
+                            } else {
+                                throw new Error('Circuit edit failed: unknown edit type');
+                            }
+                            return snapshot();
+                        }
+                    };
+                })();
             """.replace("CATALOG", json.dumps(self.catalog))
             self.manager.add_script(WebKit2.UserScript.new(
                 boundary, WebKit2.UserContentInjectedFrames.TOP_FRAME,

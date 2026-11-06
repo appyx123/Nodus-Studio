@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-edit-circuit"
+description = "Enables the edit_circuit command without any pre-configured scope."
+commands.allow = ["edit_circuit"]
+
+[[permission]]
+identifier = "deny-edit-circuit"
+description = "Denies the edit_circuit command without any pre-configured scope."
+commands.deny = ["edit_circuit"]

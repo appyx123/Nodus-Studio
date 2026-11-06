@@ -1,11 +1,31 @@
+import type { Pin } from "../../types/nodpkg";
+import type { Point } from "./geometry";
+
 export interface InstanceGraphic {
   element: SVGSVGElement;
   width: number;
   height: number;
+  viewBoxOrigin: Point;
+  pinPositions: Map<string, Point>;
+}
+
+function elementCenter(element: Element): Point {
+  const num = (attr: string) => Number(element.getAttribute(attr) ?? "0") || 0;
+  const tag = element.localName;
+  if (tag === "circle" || tag === "ellipse") {
+    return { x: num("cx"), y: num("cy") };
+  }
+  if (tag === "rect") {
+    return { x: num("x") + num("width") / 2, y: num("y") + num("height") / 2 };
+  }
+  if (tag === "line") {
+    return { x: (num("x1") + num("x2")) / 2, y: (num("y1") + num("y2")) / 2 };
+  }
+  return { x: num("x"), y: num("y") };
 }
 
 /** Input must be the normalized SVG returned by the Rust package validator. */
-export function instanceGraphic(source: string, instanceId: string): InstanceGraphic {
+export function instanceGraphic(source: string, instanceId: string, pins: Pin[] = []): InstanceGraphic {
   if (!/^node-[a-f0-9-]{36}$/.test(instanceId)) throw new Error("Invalid canvas instance ID");
   const parsed = new DOMParser().parseFromString(source, "image/svg+xml");
   const root = parsed.documentElement;
@@ -16,6 +36,8 @@ export function instanceGraphic(source: string, instanceId: string): InstanceGra
     throw new Error("Component graphic requires a valid viewBox");
   }
   const element = document.importNode(root, true) as unknown as SVGSVGElement;
+  const pinByAnchor = new Map(pins.map((pin) => [pin.svg_anchor, pin]));
+  const pinPositions = new Map<string, Point>();
   const ids = new Map<string, string>();
   for (const item of [element, ...element.querySelectorAll("[id]")]) {
     const id = item.getAttribute("id");
@@ -24,6 +46,17 @@ export function instanceGraphic(source: string, instanceId: string): InstanceGra
       ids.set(id, namespaced);
       item.setAttribute("data-original-id", id);
       item.setAttribute("id", namespaced);
+      const pin = pinByAnchor.get(id);
+      if (pin) {
+        pinPositions.set(pin.id, elementCenter(item));
+        item.setAttribute("data-pin-id", pin.id);
+        item.setAttribute("data-pin-type", pin.type);
+        item.setAttribute("data-instance-id", instanceId);
+        item.setAttribute("role", "button");
+        item.setAttribute("tabindex", "0");
+        item.setAttribute("aria-label", `${pin.name} (${pin.id}) on ${instanceId}`);
+        item.classList.add("canvas-pin");
+      }
     }
   }
   // Current Rust SVG contract rejects references; keep local ID references isolated if it expands.
@@ -45,5 +78,11 @@ export function instanceGraphic(source: string, instanceId: string): InstanceGra
   element.setAttribute("x", "0");
   element.setAttribute("y", "0");
 
-  return { element, width: viewBox[2], height: viewBox[3] };
+  return {
+    element,
+    width: viewBox[2],
+    height: viewBox[3],
+    viewBoxOrigin: { x: viewBox[0], y: viewBox[1] },
+    pinPositions,
+  };
 }

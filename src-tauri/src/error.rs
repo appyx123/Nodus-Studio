@@ -4,6 +4,8 @@ pub enum NodusError {
     Application(#[from] tauri::Error),
     #[error("Component discovery failed: {0}")]
     PackageDiscovery(String),
+    #[error("Circuit edit failed: {0}")]
+    Circuit(String),
     #[error("Component discovery worker failed: {0}")]
     Worker(String),
 }

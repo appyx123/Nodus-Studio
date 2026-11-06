@@ -58,3 +58,62 @@ export interface RegistryCatalog {
   packages: ComponentPackage[];
   diagnostics: PackageDiagnostic[];
 }
+
+export type WireColor = "green" | "blue" | "amber" | "red" | "violet";
+
+export interface Endpoint {
+  instance_id: string;
+  pin_id: string;
+}
+
+export type CircuitEdit =
+  | {
+      type: "add_instance";
+      instance_id: string;
+      component_id: string;
+      component_version: string;
+    }
+  | {
+      type: "remove_instance";
+      instance_id: string;
+    }
+  | {
+      type: "connect";
+      wire_id: string;
+      a: Endpoint;
+      b: Endpoint;
+      color: WireColor;
+    }
+  | {
+      type: "remove_wire";
+      wire_id: string;
+    }
+  | {
+      type: "set_wire_color";
+      wire_id: string;
+      color: WireColor;
+    };
+
+export interface InstanceSnapshot {
+  instance_id: string;
+  component_id: string;
+  component_version: string;
+  pins: string[];
+}
+
+export interface Wire {
+  wire_id: string;
+  a: Endpoint;
+  b: Endpoint;
+  color: WireColor;
+}
+
+export interface Net {
+  endpoints: Endpoint[];
+}
+
+export interface CircuitSnapshot {
+  instances: InstanceSnapshot[];
+  wires: Wire[];
+  nets: Net[];
+}

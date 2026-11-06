@@ -73,7 +73,7 @@ Catalog previews use a bounded-size `<img>` data URL, **not `innerHTML` or inlin
 
 ## IPC and UI
 
-The only added command is `list_components`, with no frontend-supplied arguments. It runs scanning in a blocking worker and returns:
+The local window commands are `list_components`, `get_circuit`, and `edit_circuit`. `list_components` takes no frontend-supplied arguments, runs scanning in a blocking worker, registers the validated catalog definitions in the backend circuit state, and returns:
 
 ```json
 {
@@ -84,12 +84,12 @@ The only added command is `list_components`, with no frontend-supplied arguments
 
 The placeholder strings illustrate envelope shape, not the actual manifest type. Lua source and file handles are never returned. Registry-level errors use the serialized `NodusError` message; package-level failures remain diagnostics. Full paths may appear locally in diagnostics; do not upload logs containing private paths unnecessarily.
 
-The local `main` capability grants only `allow-list-components`. App command permissions are generated explicitly by the build script; no remote capability, native filesystem plugin, shell plugin, or global API is enabled. Production CSP remains active. The browser-only preview reports that desktop discovery is unavailable instead of bypassing the backend.
+The local `main` capability grants only `allow-list-components`, `allow-get-circuit`, and `allow-edit-circuit`. App command permissions are generated explicitly by the build script; no remote capability, native filesystem plugin, shell plugin, or global API is enabled. Production CSP remains active. The browser-only preview reports that desktop discovery is unavailable instead of bypassing the backend.
 
 ## Current scope
 
-Implemented: package metadata/visual contract, loader, fail-closed SVG subset, static LED fixture, local discovery IPC, catalog previews, diagnostics, reload, and session-only visual placement with namespaced instances, pan/zoom, grid snapping, dragging, selection, keyboard nudging, and deletion.
+Implemented: package metadata/visual contract, loader, fail-closed SVG subset, static LED fixture, local discovery IPC, catalog previews, diagnostics, reload, session-only visual placement with namespaced instances, pan/zoom, grid snapping, dragging, selection, keyboard nudging, deletion, Manhattan pin-to-pin wiring, wire color changes, and an authoritative Rust session netlist.
 
-Placement uses world coordinates with 25.4-unit grid spacing; `screen = viewport_translation + world * zoom`. Canvas position is the top-left of the nested SVG viewport. Add places near the visible center; drop places that origin under the pointer. Instances keep their package snapshot across catalog Reload and have distinct `node-<UUID>` identities. The frontend limits placement to 256 instances; it does not yet register circuit topology with Rust.
+Placement uses world coordinates with 25.4-unit grid spacing; `screen = viewport_translation + world * zoom`. Canvas position is the top-left of the nested SVG viewport. Pin world positions are derived from `instance_position + local_pin - viewBox_origin`. Add places near the visible center; drop places that origin under the pointer. Instances (`node-<UUID>`) and wires (`wire-<UUID>`) are validated and stored in the Rust `CircuitState` (up to 256 instances and 1,024 wires), which computes connected endpoint nets and cascades wire deletion when an instance is removed.
 
-Not implemented: pin connection behavior, netlist, project persistence, Lua execution, live visual updates, scheduler, or firmware emulation. Those remain behind their blueprint roadmap gates.
+Not implemented: project persistence, Lua execution, live visual updates, scheduler, electrical net resolution, or firmware emulation. Those remain behind their blueprint roadmap gates.

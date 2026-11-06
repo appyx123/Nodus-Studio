@@ -90,6 +90,31 @@ body {
   outline-offset: 5px;
 }
 
+.canvas-pin {
+  cursor: crosshair;
+  transition: stroke 120ms ease, stroke-width 120ms ease;
+}
+
+.canvas-pin:hover, .canvas-pin:focus-visible, .canvas-pin.is-active-pin {
+  stroke: #34d399;
+  stroke-width: 2px;
+  outline: none;
+}
+
+.canvas-wire {
+  cursor: pointer;
+}
+
+.canvas-wire.is-selected, .canvas-wire:focus-visible {
+  outline: 1px dashed #34d399;
+  outline-offset: 3px;
+}
+
+.workbench-button[aria-pressed="true"] {
+  border-color: #34d399;
+  background: #064e3b;
+}
+
 .canvas-empty {
   position: absolute;
   inset: 0;

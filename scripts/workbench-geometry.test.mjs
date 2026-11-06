@@ -33,7 +33,7 @@ try {
 }
 
 const { GRID, MIN_ZOOM, MAX_ZOOM, screenToWorld, worldToScreen,
-  snapPoint, zoomAt, dragPosition } = geometry;
+  snapPoint, zoomAt, dragPosition, pinWorldPoint, manhattanRoute, manhattanPath } = geometry;
 
 function closePoint(actual, expected) {
   for (const axis of ["x", "y"]) {
@@ -150,4 +150,30 @@ test("geometry operations do not mutate their inputs", () => {
   assert.deepEqual(point, { x: -10, y: 30 });
   assert.deepEqual(cursor, { x: 100, y: -20 });
   assert.deepEqual(viewport, { x: 60, y: -80, zoom: 2 });
+});
+
+test("pinWorldPoint offsets local pin coordinates by instance position and viewBox origin", () => {
+  assert.deepEqual(pinWorldPoint({ x: 50.8, y: 101.6 }, { x: 25.4, y: 88.9 }), { x: 76.2, y: 190.5 });
+  assert.deepEqual(pinWorldPoint({ x: 50.8, y: 101.6 }, { x: 25.4, y: 88.9 }, { x: 10, y: -20 }),
+    { x: 66.2, y: 210.5 });
+});
+
+test("manhattanRoute generates orthogonal segments for aligned and offset endpoints", () => {
+  assert.deepEqual(manhattanRoute({ x: 25.4, y: 50.8 }, { x: 25.4, y: 50.8 }),
+    [{ x: 25.4, y: 50.8 }, { x: 25.4, y: 50.8 }]);
+  assert.deepEqual(manhattanRoute({ x: 25.4, y: 50.8 }, { x: 127, y: 50.8 }),
+    [{ x: 25.4, y: 50.8 }, { x: 127, y: 50.8 }]);
+  assert.deepEqual(manhattanRoute({ x: 25.4, y: 50.8 }, { x: 25.4, y: 152.4 }),
+    [{ x: 25.4, y: 50.8 }, { x: 25.4, y: 152.4 }]);
+  const route = manhattanRoute({ x: 25.4, y: 88.9 }, { x: 127, y: 139.7 });
+  assert.equal(route.length, 4);
+  assert.deepEqual(route[0], { x: 25.4, y: 88.9 });
+  assert.deepEqual(route[3], { x: 127, y: 139.7 });
+  for (let index = 1; index < route.length; index++) {
+    const prev = route[index - 1];
+    const curr = route[index];
+    assert.ok(prev.x === curr.x || prev.y === curr.y, `Segment ${index} is not orthogonal`);
+  }
+  assert.equal(manhattanPath({ x: 25.4, y: 88.9 }, { x: 127, y: 139.7 }),
+    "M 25.4 88.9 L 76.2 88.9 L 76.2 139.7 L 127 139.7");
 });
