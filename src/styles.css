@@ -12,3 +12,104 @@ body {
   margin: 0;
   min-width: 320px;
 }
+
+.app-shell {
+  display: flex;
+  height: 100dvh;
+  min-height: 600px;
+  flex-direction: column;
+}
+
+.workbench-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+}
+
+.component-sidebar {
+  overflow: auto;
+  border-right: 1px solid #27272a;
+}
+
+.workbench-main {
+  display: flex;
+  min-height: 0;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.workbench-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #27272a;
+}
+
+.workbench-button {
+  border: 1px solid #52525b;
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: #e4e4e7;
+  background: #18181b;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.workbench-button:hover:not(:disabled) { border-color: #34d399; }
+.workbench-button:disabled { opacity: 0.4; cursor: default; }
+.workbench-button:focus-visible { outline: 2px solid #34d399; outline-offset: 2px; }
+
+.workbench-stage {
+  position: relative;
+  flex: 1;
+  min-height: 260px;
+  overflow: hidden;
+}
+
+.workbench-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.workbench-svg:active { cursor: grabbing; }
+.workbench-svg:focus-visible { outline: 2px solid #34d399; outline-offset: -2px; }
+.canvas-node { cursor: move; }
+.canvas-node.is-selected, .canvas-node:focus-visible {
+  outline: 1px dashed #34d399;
+  outline-offset: 5px;
+}
+
+.canvas-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 24px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.workbench-status {
+  min-height: 78px;
+  border-top: 1px solid #27272a;
+  padding: 12px 20px;
+  color: #a1a1aa;
+  font-size: 11px;
+}
+
+@media (max-width: 700px) {
+  .workbench-layout { grid-template-columns: 210px minmax(0, 1fr); }
+}

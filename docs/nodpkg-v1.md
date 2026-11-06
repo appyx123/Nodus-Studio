@@ -69,7 +69,7 @@ The Rust validator uses `quick-xml`, validates decoded values, and rebuilds XML 
 - Text can set bounded nonnegative `font-size`, `font-family` from `serif`/`sans-serif`/`monospace`, and `text-anchor` from `start`/`middle`/`end`.
 - Reject unknown elements/attributes, namespace rebinding/prefixes, XML declarations, DTD/entities, processing instructions, scripts, event attributes, style/CSS, foreignObject, image/use/href, external URLs, transforms, gradients, and filters. Rich SVG effects require a reviewed extension, not silent bypasses.
 
-Catalog previews use a bounded-size `<img>` data URL, **not `innerHTML` or inline DOM SVG**. Each preview has its own image document, so IDs do not collide between previews. A future inline canvas renderer must namespace IDs and references per instance before inserting validated SVG into the DOM. Catalog preview sizes are UI thumbnails, not physical canvas placement.
+Catalog previews use a bounded-size `<img>` data URL, **not `innerHTML` or inline DOM SVG**. Each preview has its own image document, so IDs do not collide between previews. The canvas renderer parses only Rust-normalized SVG with `DOMParser`, imports its DOM without `innerHTML`, and prefixes IDs with `<instance_id>--`. Local ID-reference rewriting does not expand the Rust allowlist: package references are still rejected by v1. Catalog preview sizes are UI thumbnails, not physical canvas placement. Nested canvas SVG dimensions match its viewBox extent, preserving world-unit scale; a nonzero viewBox origin is handled by the nested SVG viewport.
 
 ## IPC and UI
 
@@ -88,6 +88,8 @@ The local `main` capability grants only `allow-list-components`. App command per
 
 ## Current scope
 
-Implemented: package metadata/visual contract, loader, fail-closed SVG subset, static LED fixture, local discovery IPC, catalog previews, diagnostics, and reload.
+Implemented: package metadata/visual contract, loader, fail-closed SVG subset, static LED fixture, local discovery IPC, catalog previews, diagnostics, reload, and session-only visual placement with namespaced instances, pan/zoom, grid snapping, dragging, selection, keyboard nudging, and deletion.
 
-Not implemented: interactive placement, pin connection behavior, netlist, Lua execution, live visual updates, scheduler, or firmware emulation. Those remain behind their blueprint roadmap gates.
+Placement uses world coordinates with 25.4-unit grid spacing; `screen = viewport_translation + world * zoom`. Canvas position is the top-left of the nested SVG viewport. Add places near the visible center; drop places that origin under the pointer. Instances keep their package snapshot across catalog Reload and have distinct `node-<UUID>` identities. The frontend limits placement to 256 instances; it does not yet register circuit topology with Rust.
+
+Not implemented: pin connection behavior, netlist, project persistence, Lua execution, live visual updates, scheduler, or firmware emulation. Those remain behind their blueprint roadmap gates.

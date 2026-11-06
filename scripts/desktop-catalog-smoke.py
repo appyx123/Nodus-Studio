@@ -65,9 +65,13 @@ def contains(records, value):
     return any(value in name or value in text for _, _, name, text in records)
 
 
+def activate(records, label):
+    button = next(item for item, role, name, _ in records if role == "button" and name == label)
+    assert button.queryAction().doAction(0), f"Could not activate {label}"
+
+
 def reload_catalog(records):
-    button = next(item for item, role, name, _ in records if role == "button" and name == "Reload")
-    button.queryAction().doAction(0)
+    activate(records, "Reload")
 
 
 def main():
@@ -101,6 +105,21 @@ def main():
                        for _, role, name, text in records), "Loaded SVG content is missing"
             print("PASS: isolated SVG preview and its content are exposed to accessibility", flush=True)
 
+            activate(records, "Add Red LED")
+            records = wait_for(process, lambda rows: contains(rows, "1 instance(s)"), "native Add places the first LED")
+            activate(records, "Add Red LED")
+            records = wait_for(process, lambda rows: contains(rows, "2 instance(s)"), "native Add places a second LED")
+            names = {name for _, _, name, _ in records if name.startswith("Red LED instance node-")}
+            assert len(names) == 2, f"Expected two separately named instances: {names!r}"
+            print("PASS: two native canvas instances have distinct accessible identities", flush=True)
+            activate(records, "Zoom out")
+            records = wait_for(process, lambda rows: contains(rows, "160%"), "native zoom control changes the viewport")
+            activate(records, "Reset view")
+            records = wait_for(process, lambda rows: contains(rows, "200%"), "native Reset view restores zoom")
+            activate(records, "Delete selected")
+            records = wait_for(process, lambda rows: contains(rows, "1 instance(s)")
+                               and not contains(rows, "2 instance(s)"), "native deletion removes only the selected instance")
+
             shutil.rmtree(invalid)
             reload_catalog(records)
             records = wait_for(process, lambda rows: contains(rows, "1 package(s) loaded")
@@ -110,7 +129,7 @@ def main():
             shutil.rmtree(registry)
             reload_catalog(records)
             records = wait_for(process, lambda rows: contains(rows, "Component discovery failed:")
-                               and contains(rows, "A foundation for connected ideas."),
+                               and contains(rows, "Circuit workbench") and contains(rows, "1 instance(s)"),
                                "missing registry shows an error without crashing the shell")
 
             shutil.copytree(BUILT_REGISTRY, registry)

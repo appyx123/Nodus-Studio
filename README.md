@@ -17,7 +17,7 @@ Modular components. A Rust-powered foundation. An open ecosystem.
 
 ---
 
-> **Early development — not yet a working circuit simulator.** The desktop foundation, validated component loader, and package catalog are implemented. Interactive circuit editing, simulation, and firmware execution are still on the roadmap. There is no verified release package yet.
+> **Early development — not yet a working circuit simulator.** The desktop foundation, validated component loader, catalog, and visual placement canvas are implemented. Wiring, simulation, and firmware execution are still on the roadmap. There is no verified release package yet.
 
 ## Why Nodus?
 
@@ -43,9 +43,9 @@ Nodus Studio aims to bring intuitive circuit building and deeper IoT emulation i
 | --- | --- | --- |
 | Desktop shell | Tauri v2 + WebKitGTK | Native window, local IPC, resource discovery |
 | Backend | Rust | Package validation today; topology and simulation in later steps |
-| Interface | SolidJS + TypeScript | Reactive catalog and future workbench interactions |
+| Interface | SolidJS + TypeScript | Reactive catalog and visual workbench interactions |
 | Tooling and styles | Vite + Tailwind CSS v4 | Frontend builds and dark-first UI |
-| Component graphics | Validated SVG | Isolated catalog previews; interactive rendering is planned |
+| Component graphics | Validated SVG | Isolated catalog previews and namespaced inline canvas instances |
 
 **Planned, not integrated:** Lua 5.4 via `mlua`, Monaco Editor, `arduino-cli`, an AVR emulation backend subject to a technical spike, and later virtual buses/MQTT. See the [blueprint](master_project_blueprint_ai_context_specification.md) for the approved architecture.
 
@@ -59,15 +59,19 @@ Nodus Studio aims to bring intuitive circuit building and deeper IoT emulation i
 - A Rust loader for directory-based `.nodpkg` packages.
 - Strict manifest v1 validation: versions, IDs, pins, anchors, ranges, and visual declarations.
 - A restricted SVG allowlist with normalized output and bounded file/catalog sizes.
-- A complete **Red LED** fixture with an isolated SVG preview.
+- A complete **Red LED** fixture with an isolated catalog preview and multiple namespaced canvas instances.
+- Visual placement by Add or drag-and-drop, unbounded panning, cursor-anchored zoom (20–400%), and 2.54 mm snap-to-grid.
+- Selection, keyboard nudging, and deletion. Placement is session-only, with a 256-instance cap.
 - Package-level diagnostics, catalog Reload, and recovery from a missing registry.
 - A narrow local discovery command; no frontend-supplied filesystem paths.
 
 ### Not available yet
 
-Interactive placement, pan/zoom, snap-to-grid, wiring, a Rust-owned netlist, Lua execution, live electrical simulation, firmware editing, or MCU emulation.
+Wiring, a Rust-owned netlist, project persistence, Lua execution, live electrical simulation, firmware editing, or MCU emulation.
 
-**Recorded verification:** 34 Rust tests, 5 Node tests, frontend typecheck/build, Rust formatting, Clippy, and native debug build passed in [implementation report 005](docs/reports/005-phase-1-component-loader.md). A bounded Fedora GNOME/Wayland accessibility smoke test checked resource relocation, loaded SVG content, invalid-package isolation, and Reload/error recovery.
+**Recorded verification:** 34 Rust tests, 20 Node tests, frontend typecheck/build, Rust formatting, Clippy, and native debug build passed. Real WebKitGTK DOM checks cover hit-testing, multi-instance ID isolation, pin geometry, pan/zoom/drag/drop, cancellation, keyboard focus, and browser fallback. Native Fedora GNOME/Wayland accessibility checks cover resource discovery, Add, zoom/reset, deletion, and catalog error recovery. See [canvas report 008](docs/reports/008-phase-1-interactive-workbench.md) and [loader report 005](docs/reports/005-phase-1-component-loader.md).
+
+The WebKit interaction harness mocks only discovery and dispatches synthetic input. Physical drag/drop and trusted pointer capture still need a manual desktop check.
 
 These are recorded local results, **not a CI badge**. Pixel-level visual QA, release packaging, and minimum-compiler compatibility remain unverified. [PROGRESS.md](PROGRESS.md) is the current handoff summary.
 
@@ -110,6 +114,20 @@ npm run tauri -- dev
 
 Already in the project workspace? Skip the clone and `cd` commands. The first native build downloads dependencies and may take several minutes.
 
+### Workbench controls
+
+| Action | Control |
+| --- | --- |
+| Place a component | Click **Add to canvas**, or drag that button onto the canvas |
+| Move an instance | Drag its painted body; position snaps to the grid |
+| Pan | Drag empty canvas space, or middle-drag |
+| Zoom | Scroll over the canvas, or use the zoom buttons |
+| Nudge | Focus an instance with Tab, then use arrow keys |
+| Select / delete | Click or focus an instance; use **Delete selected**, Delete, or Backspace |
+| Restore viewport | Click **Reset view**; instances are not removed |
+
+**Placement is not saved.** Closing or reloading the app clears the canvas. Library Reload refreshes discovery without deleting existing placements. No pins are connected and no hardware behavior runs yet.
+
 ### Preview the frontend only
 
 ```sh
@@ -148,7 +166,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D w
 
 Rust tests cover manifests, the shared serialization fixture, SVG rejection/normalization, package isolation, resource limits, symlinks/FIFOs, and resource-path construction. Node tests cover project configuration and positive/negative TypeScript contract checks. Neither replaces a desktop interaction test.
 
-### Desktop catalog smoke test
+### Desktop smoke checks
 
 After a native debug build, on GNOME/Wayland with system `pyatspi` already available:
 
@@ -156,7 +174,15 @@ After a native debug build, on GNOME/Wayland with system `pyatspi` already avail
 python3 scripts/desktop-catalog-smoke.py
 ```
 
-The bounded script launches a private relocated binary/resource copy, inspects accessibility by child PID, checks catalog error/recovery paths, and cleans up. It changes no original package files, takes no screenshots, and installs no dependencies. Accessibility evidence is not pixel-level visual QA or a complete CSP audit.
+The bounded script launches a private relocated binary/resource copy, inspects accessibility by child PID, checks Add/zoom/reset/deletion plus catalog error/recovery paths, and cleans up. It changes no original package files, takes no screenshots, and installs no dependencies. Accessibility evidence is not pixel-level visual QA or a complete CSP audit.
+
+For DOM interaction checks in real WebKitGTK, after `npm run build`, with system Python `gi`, GTK3, and WebKit2 4.1 already available:
+
+```sh
+python3 scripts/webkit-workbench-smoke.py
+```
+
+This separate, bounded harness serves `dist` on a temporary loopback port and mocks only the discovery boundary. It checks actual SVG screen transforms and hit-testing, but uses synthetic input, not physical mouse/keyboard events or native Tauri IPC. A fresh unmocked WebView also checks the browser-only fallback. The WebView and local server are closed on exit; it is not a production server.
 
 ## The `.nodpkg` component format
 
@@ -180,13 +206,13 @@ Read the [package contract](docs/nodpkg-v1.md), inspect the [LED manifest](compo
 
 | Phase | Scope | Status |
 | --- | --- | --- |
-| **1 · Visual foundation** | Desktop shell, package loader, catalog, interactive canvas, wiring, Rust netlist | **In progress** — foundation, loader, and catalog implemented |
+| **1 · Visual foundation** | Desktop shell, package loader, catalog, interactive canvas, wiring, Rust netlist | **In progress** — foundation, loader, catalog, and visual canvas implemented |
 | **2 · Simulation core** | Deterministic scheduler, digital net resolution, Lua sandbox, binary visual frames | Not started |
 | **3 · Firmware workflow** | AVR backend spike, Monaco, `arduino-cli`, first MCU integration | Not started |
 | **4 · IoT components** | Sensors, displays, actuators, I2C/SPI, opt-in MQTT bridge | Not started |
 | **5 · Polish and distribution** | Versioned project files, logic analyzer, RPM/Flatpak packaging | Not started |
 
-**Next milestone:** an interactive workbench with multiple LED instances, consistent pin coordinates, pan/zoom, 25.4-unit snap-to-grid, and drag-and-drop. Wiring and a Rust-owned netlist follow before Phase 1 can be completed.
+**Next milestone:** pin-to-pin wires with Manhattan routing and color selection, backed by a Rust-owned topology/netlist. Component and wire deletion must keep the graph consistent before Phase 1 can be completed.
 
 Phases have explicit acceptance gates. Planned features are not release commitments. The MVP is not a general analog/SPICE solver; ESP32 emulation is outside the current deliverables.
 
@@ -220,7 +246,8 @@ Bug reports are most useful with your OS/session, tool versions, reproduction st
 - [Architecture and acceptance criteria](master_project_blueprint_ai_context_specification.md)
 - [Current progress and next actions](PROGRESS.md)
 - [Component package contract](docs/nodpkg-v1.md)
-- [Implementation and verification evidence](docs/reports/005-phase-1-component-loader.md)
+- [Canvas implementation and verification](docs/reports/008-phase-1-interactive-workbench.md)
+- [Loader implementation and verification](docs/reports/005-phase-1-component-loader.md)
 - [Stage report archive](docs/reports/)
 - [Agent collaboration rules](AGENTS.md)
 
