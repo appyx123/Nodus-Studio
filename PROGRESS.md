@@ -5,12 +5,12 @@
 Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint tetap menjadi sumber kebenaran persyaratan; file ini merangkum keadaan implementasi.
 
 - **Fase aktif:** Fase 2 — Mesin Simulasi Inti & Sandbox Komponen Lua (`in-progress`).
-- **Subtahap terakhir:** Fase 2 Langkah 1 — scheduler deterministik dan resolusi net digital (`completed`).
+- **Subtahap terakhir:** Fase 2 Langkah 2 — kontrak API Lua v1 dan sandbox di `lua_host.rs` (`completed`).
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 1 telah memiliki bukti uji; pemeriksaan input fisik manual dicatat `not-run`).
-- **Laporan terbaru:** [010 — Scheduler deterministik dan resolusi net digital](docs/reports/010-phase-2-scheduler-and-net-resolution.md).
+- **Laporan terbaru:** [011 — Sandbox Lua 5.4 dan kontrak API host v1](docs/reports/011-phase-2-lua-sandbox-host.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Fase 2 Langkah 2 — kontrak API Lua v1 dan sandbox di `lua_host.rs` (`in-progress`).
+- **Langkah berikutnya:** Fase 2 Langkah 3 — protokol frame biner ber-versi dan streamer 60 Hz di `frame_streamer.rs` & `simulationStore.ts` (`in-progress`).
 
 ## Ringkasan roadmap
 
@@ -74,5 +74,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [008 — Fase 1: kanvas interaktif dan instance komponen](docs/reports/008-phase-1-interactive-workbench.md)
 - [009 — Fase 1: kabel Manhattan dan netlist authoritative Rust](docs/reports/009-phase-1-wiring-and-netlist.md)
 - [010 — Fase 2: scheduler deterministik dan resolusi net digital](docs/reports/010-phase-2-scheduler-and-net-resolution.md)
+- [011 — Fase 2: sandbox Lua 5.4 dan kontrak API host v1](docs/reports/011-phase-2-lua-sandbox-host.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `011` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `012` (periksa ulang sebelum membuat file).

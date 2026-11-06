@@ -13,6 +13,8 @@ const MAX_PACKAGE_PAYLOAD: usize = 14 * 1024 * 1024;
 pub struct ComponentPackage {
     pub manifest: Manifest,
     pub svg: String,
+    #[serde(skip_serializing)]
+    pub lua_source: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -124,6 +126,7 @@ fn load_package(root: &Path, path: &Path, id: &str) -> Result<ComponentPackage, 
     Ok(ComponentPackage {
         manifest,
         svg: info.svg,
+        lua_source: lua,
     })
 }
 
