@@ -1,111 +1,237 @@
+<div align="center">
+
 # Nodus Studio
 
-An open-source desktop IoT workbench built with Tauri v2, Rust, SolidJS, TypeScript, Vite, and Tailwind CSS v4.
+### An open workbench for connected ideas.
 
-## Current status
+A Linux-first desktop IoT simulator in the making.<br>
+Modular components. A Rust-powered foundation. An open ecosystem.
 
-Phase 1, step 2 is complete: a Rust `.nodpkg` loader validates manifests and a restricted SVG subset, then exposes the built-in LED package through a local-only Tauri command. The catalog shows isolated SVG previews, package diagnostics, and Reload. Lua is required as package text but is never executed or sent to the frontend.
+[![Status: Early development](https://img.shields.io/badge/status-early_development-f59e0b?style=flat-square)](#project-status)
+[![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
+[![Target: Fedora Linux](https://img.shields.io/badge/target-Fedora_Linux-51A2DA?style=flat-square&logo=fedora&logoColor=white)](#getting-started)
 
-Verification: 34 Rust tests, five Node tests, frontend typecheck/build, formatting, Clippy, and native debug build passed. A bounded Fedora GNOME/Wayland accessibility smoke test checked relocated Linux resources, loaded SVG content, invalid-package isolation, and error/reload recovery. Pixel-level visual QA and release packaging remain unverified. See [`PROGRESS.md`](PROGRESS.md) and [report 005](docs/reports/005-phase-1-component-loader.md).
+[Explore the vision](#why-nodus) · [Get started](#getting-started) · [Roadmap](#roadmap) · [Contribute](#contributing)
 
-The interactive canvas, wiring, netlist, simulation, and firmware editing are not implemented. Phase 1 as a whole remains `in-progress`.
+</div>
 
-Before contributing or handing work to another agent, read:
+---
 
-1. [`AGENTS.md`](AGENTS.md)
-2. [`master_project_blueprint_ai_context_specification.md`](master_project_blueprint_ai_context_specification.md)
-3. [`PROGRESS.md`](PROGRESS.md) and its latest numbered report
+> **Early development — not yet a working circuit simulator.** The desktop foundation, validated component loader, and package catalog are implemented. Interactive circuit editing, simulation, and firmware execution are still on the roadmap. There is no verified release package yet.
 
-## Development prerequisites
+## Why Nodus?
 
-- Node.js 22.12+ on the 22.x line, or Node.js 24+; this stage used Node.js 22.23.1.
-- npm 10.9.8, with dependency versions recorded in `package-lock.json`.
-- Rust/Cargo supporting Rust 1.90 or newer. The manifest uses Edition 2021; the detected Fedora Rust and Cargo versions are both 1.99.1. The actual compiler is recorded, not automatically pinned via rustup. `src-tauri/Cargo.lock` records the resolved native dependency graph; retain it and use `--locked` for Cargo checks.
-- Native Tauri development dependencies for the target operating system.
+**Nodus** is Latin for *knot* or *node*: a connection between circuits, devices, and people.
 
-### Fedora
+Nodus Studio aims to bring intuitive circuit building and deeper IoT emulation into an open-source desktop application. The long-term inspiration is the visual approachability of Tinkercad and the technical depth of Wokwi—not a claim of feature parity today.
 
-These package names were found in the Fedora 45 local repository metadata. Run this from an interactive host terminal with administrator access; do not provide your password to an agent:
+- **Desktop-native foundation.** Tauri v2 uses the system WebView, with Fedora GNOME/Wayland as the first-class target.
+- **An open component format.** Component metadata, graphics, and future behavior live in `.nodpkg` packages, not hard-coded frontend components.
+- **Rust owns the hardware.** The planned simulation engine, timing, pin resolution, and MCU emulation belong in the backend. The frontend handles presentation and interaction.
+- **Build in the open.** Architecture, acceptance gates, verification evidence, and stage reports live alongside the code.
+
+## Tech stack
+
+[![Tauri](https://img.shields.io/badge/Tauri-v2-24C8D8?style=for-the-badge&logo=tauri&logoColor=white)](https://tauri.app/)
+[![Rust](https://img.shields.io/badge/Rust-2021_Edition-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![SolidJS](https://img.shields.io/badge/SolidJS-2C4F7C?style=for-the-badge&logo=solid&logoColor=white)](https://www.solidjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+
+| Layer | Technology | Responsibility |
+| --- | --- | --- |
+| Desktop shell | Tauri v2 + WebKitGTK | Native window, local IPC, resource discovery |
+| Backend | Rust | Package validation today; topology and simulation in later steps |
+| Interface | SolidJS + TypeScript | Reactive catalog and future workbench interactions |
+| Tooling and styles | Vite + Tailwind CSS v4 | Frontend builds and dark-first UI |
+| Component graphics | Validated SVG | Isolated catalog previews; interactive rendering is planned |
+
+**Planned, not integrated:** Lua 5.4 via `mlua`, Monaco Editor, `arduino-cli`, an AVR emulation backend subject to a technical spike, and later virtual buses/MQTT. See the [blueprint](master_project_blueprint_ai_context_specification.md) for the approved architecture.
+
+## Project status
+
+**Phase 1 · Foundation and interactive canvas · `in-progress`**
+
+### Available today
+
+- A Tauri desktop application with a SolidJS interface.
+- A Rust loader for directory-based `.nodpkg` packages.
+- Strict manifest v1 validation: versions, IDs, pins, anchors, ranges, and visual declarations.
+- A restricted SVG allowlist with normalized output and bounded file/catalog sizes.
+- A complete **Red LED** fixture with an isolated SVG preview.
+- Package-level diagnostics, catalog Reload, and recovery from a missing registry.
+- A narrow local discovery command; no frontend-supplied filesystem paths.
+
+### Not available yet
+
+Interactive placement, pan/zoom, snap-to-grid, wiring, a Rust-owned netlist, Lua execution, live electrical simulation, firmware editing, or MCU emulation.
+
+**Recorded verification:** 34 Rust tests, 5 Node tests, frontend typecheck/build, Rust formatting, Clippy, and native debug build passed in [implementation report 005](docs/reports/005-phase-1-component-loader.md). A bounded Fedora GNOME/Wayland accessibility smoke test checked resource relocation, loaded SVG content, invalid-package isolation, and Reload/error recovery.
+
+These are recorded local results, **not a CI badge**. Pixel-level visual QA, release packaging, and minimum-compiler compatibility remain unverified. [PROGRESS.md](PROGRESS.md) is the current handoff summary.
+
+## Getting started
+
+### Prerequisites
+
+| Requirement | Notes |
+| --- | --- |
+| Node.js | `^22.12.0` or `>=24.0.0`; recorded environment: 22.23.1 |
+| npm | Project package manager: 10.9.8; use `package-lock.json` |
+| Rust + Cargo | Manifest minimum: Rust 1.90, Edition 2021; verified compiler: Fedora 1.99.1 |
+| Native libraries | Tauri v2 prerequisites for your operating system |
+
+The minimum Rust compiler has not been tested independently. Keep both lockfiles; use `--locked` for Cargo checks. A Lua runtime, `arduino-cli`, and emulator dependencies are **not required at this stage**.
+
+<details>
+<summary><strong>Fedora native dependencies</strong></summary>
+
+The following names were checked against Fedora 45 repository metadata. Install them from your own terminal with administrator access:
 
 ```sh
 sudo dnf install rust cargo rustfmt clippy gcc-c++ make pkgconf-pkg-config webkit2gtk4.1-devel openssl-devel librsvg2-devel libappindicator-gtk3-devel libxdo-devel
 ```
 
-This uses the Fedora Rust toolchain. `rustup` is an alternative, not an additional requirement; avoid installing competing toolchains without deciding which one owns your PATH. AppIndicator development support is listed in the official Tauri Fedora prerequisites; this shell does not enable a tray feature.
+This uses Fedora's Rust toolchain. Rustup is an alternative, not an additional requirement. Avoid competing toolchains without deciding which owns your PATH. AppIndicator is a Tauri prerequisite here; the application does not enable a tray feature.
 
-See the [official Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) if package availability or your operating system differs. `arduino-cli`, a Lua runtime, and emulator dependencies are not needed at this stage.
+For other environments or changed package availability, follow the [official Tauri prerequisites](https://v2.tauri.app/start/prerequisites/). Other operating systems have not been verified for this project.
 
-## Install and check
+</details>
 
-Run from the existing workspace root:
+### Run the desktop app
 
 ```sh
+git clone https://github.com/appyx123/Nodus-Studio.git
+cd Nodus-Studio
 npm ci
-npm run typecheck
-npm test
-npm run build
+npm run tauri -- dev
 ```
 
-The Node tests check scaffold identity, paths, narrow command permissions, CSP, and the shared Rust/TypeScript manifest fixture, including an invalid pin type. They do not compile Rust or exercise a browser/WebView.
+Already in the project workspace? Skip the clone and `cd` commands. The first native build downloads dependencies and may take several minutes.
 
-After native dependencies are installed, run:
-
-```sh
-cargo fmt --manifest-path src-tauri/Cargo.toml --check
-cargo test --manifest-path src-tauri/Cargo.toml --locked
-cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings
-```
-
-The 34 Rust tests cover manifest validation, shared serialization, SVG rejection/normalization, file and catalog limits, package isolation, symlinks/FIFOs, and runtime resource path construction. See [`docs/nodpkg-v1.md`](docs/nodpkg-v1.md) for the implemented contract and filesystem threat-model limits. Add `--offline` to Cargo checks when dependencies are already cached.
-
-## Run
-
-Frontend-only preview during development:
+### Preview the frontend only
 
 ```sh
 npm run dev
 ```
 
-Open `http://127.0.0.1:1420`. Browser preview reports that component discovery requires the desktop app; it does not gain filesystem access. A browser preview is not a desktop smoke test.
+Open `http://127.0.0.1:1420`. Browser preview has no native filesystem access and reports that component discovery requires the desktop app. It is not a substitute for desktop validation.
 
-After native prerequisites are available:
-
-```sh
-npm run tauri -- info
-npm run tauri -- dev
-```
-
-For the verified native debug build, without creating distribution packages:
+### Build a native debug binary
 
 ```sh
 npm run tauri -- build --no-bundle --debug
 ./src-tauri/target/debug/nodus
 ```
 
-The first build downloads dependencies and may take several minutes. Run the binary directly from its Cargo output directory to inspect the catalog without a Vite server. The app remains open until you close its window.
+This runs without a Vite server and does not create distribution packages. The binary is named `nodus`; the application identifier is `org.nodus.Studio`.
 
-On Linux, Tauri resolves resources beside the binary in a recognized Cargo output directory, or from `../lib/Nodus Studio/` in an installed-style layout. Copying the binary alone is insufficient; do not rely on the current working directory.
+> **Keep resources with the application.** On Linux, Tauri finds resources beside the binary in a recognized Cargo output directory, or under `../lib/Nodus Studio/` in an installed-style layout. Copying the binary alone is insufficient; discovery does not depend on the launch working directory.
 
-For the bounded catalog smoke test on GNOME/Wayland with system `pyatspi` already available:
+For a release binary, omit `--debug`. That build remains unverified. RPM/Flatpak distribution is reserved for Phase 5.
+
+## Development checks
+
+```sh
+# Frontend configuration, shared contract, types, and build
+npm test
+npm run build
+
+# Rust formatting, behavior, and linting
+cargo fmt --manifest-path src-tauri/Cargo.toml --check
+cargo test --manifest-path src-tauri/Cargo.toml --locked
+cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings
+```
+
+`npm run build` includes typechecking; `npm run typecheck` is also available separately. Add `--offline` to Cargo checks when dependencies are cached.
+
+Rust tests cover manifests, the shared serialization fixture, SVG rejection/normalization, package isolation, resource limits, symlinks/FIFOs, and resource-path construction. Node tests cover project configuration and positive/negative TypeScript contract checks. Neither replaces a desktop interaction test.
+
+### Desktop catalog smoke test
+
+After a native debug build, on GNOME/Wayland with system `pyatspi` already available:
 
 ```sh
 python3 scripts/desktop-catalog-smoke.py
 ```
 
-The script launches a private relocated binary/resource copy, changes only that copy, inspects accessibility by child PID, and cleans up. It does not take screenshots or install dependencies.
+The bounded script launches a private relocated binary/resource copy, inspects accessibility by child PID, checks catalog error/recovery paths, and cleans up. It changes no original package files, takes no screenshots, and installs no dependencies. Accessibility evidence is not pixel-level visual QA or a complete CSP audit.
 
-For a release binary (not yet verified), omit `--debug`:
+## The `.nodpkg` component format
 
-```sh
-npm run tauri -- build --no-bundle
+A package is a **directory**, not a ZIP archive:
+
+```text
+components-registry/
+└── basic-led.nodpkg/
+    ├── manifest.toml   # Metadata, pins, controls, visual declarations
+    ├── graphic.svg     # Graphics validated by the Rust loader
+    └── logic.lua       # Required text; not executed in Phase 1
 ```
 
-The application identifier is `org.nodus.Studio`; the Cargo binary is `nodus`. RPM/Flatpak packaging is reserved for Phase 5. The local main window has only the `allow-list-components` permission. No filesystem/shell plugin or remote capability is enabled.
+The current contract supports slider declarations and numeric opacity fields. SVG features deliberately use a small fail-closed subset; rich effects are not silently accepted. Graphics use **1 SVG unit = 0.1 mm**, so standard 2.54 mm pin spacing equals 25.4 units.
 
-## Next acceptance gate
+Read the [package contract](docs/nodpkg-v1.md), inspect the [LED manifest](components-registry/basic-led.nodpkg/manifest.toml), or use the [shared normalized fixture](docs/nodpkg-v1-led.json).
 
-Next is Phase 1, step 3: build `Workbench.tsx` and `NodeRenderer.tsx`, connect the existing catalog to placement, and add pan/zoom, 25.4-unit snap-to-grid, and drag-and-drop. Multiple inline SVG instances must namespace IDs and references per `instance_id`. Then step 4 adds wires and a Rust-owned netlist. Do not execute Lua in Phase 1.
+**Security boundary:** file/payload limits and symlink checks are implemented, including Unix final-open hardening. This is not a race-proof filesystem sandbox: the built-in registry must not have hostile concurrent writers replacing parent directories. Lua is never executed or sent to the UI. The local window has only `allow-list-components`; no filesystem/shell plugin or remote capability is enabled.
 
-Continue desktop interaction and visual checks as the UI develops. The current smoke test does not prove pixel appearance, every CSP directive, canvas behavior, or netlist correctness.
+## Roadmap
 
-Each meaningful stage must create a new numbered report using [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md) and update `PROGRESS.md`, even when blocked.
+| Phase | Scope | Status |
+| --- | --- | --- |
+| **1 · Visual foundation** | Desktop shell, package loader, catalog, interactive canvas, wiring, Rust netlist | **In progress** — foundation, loader, and catalog implemented |
+| **2 · Simulation core** | Deterministic scheduler, digital net resolution, Lua sandbox, binary visual frames | Not started |
+| **3 · Firmware workflow** | AVR backend spike, Monaco, `arduino-cli`, first MCU integration | Not started |
+| **4 · IoT components** | Sensors, displays, actuators, I2C/SPI, opt-in MQTT bridge | Not started |
+| **5 · Polish and distribution** | Versioned project files, logic analyzer, RPM/Flatpak packaging | Not started |
+
+**Next milestone:** an interactive workbench with multiple LED instances, consistent pin coordinates, pan/zoom, 25.4-unit snap-to-grid, and drag-and-drop. Wiring and a Rust-owned netlist follow before Phase 1 can be completed.
+
+Phases have explicit acceptance gates. Planned features are not release commitments. The MVP is not a general analog/SPICE solver; ESP32 emulation is outside the current deliverables.
+
+## Repository map
+
+```text
+components-registry/   Built-in component packages
+docs/                  Package contract, shared fixture, stage reports
+scripts/               Configuration/contract tests and desktop smoke test
+src/                   SolidJS interface and TypeScript types
+src-tauri/             Rust backend, Tauri configuration, native lockfile
+AGENTS.md              Repository rules for coding agents
+PROGRESS.md            Current state, blockers, and next actions
+```
+
+## Contributing
+
+Contributions are welcome. Start with the current milestone rather than skipping roadmap gates.
+
+1. Read the [blueprint](master_project_blueprint_ai_context_specification.md), [repository instructions](AGENTS.md), and [progress summary](PROGRESS.md).
+2. For substantial changes, [open an issue](https://github.com/appyx123/Nodus-Studio/issues) to discuss scope before building.
+3. Keep changes focused; preserve the approved stack, backend hardware boundary, validation, and lockfiles.
+4. Add focused tests and run the relevant checks above. State what you could not verify.
+5. Include a new numbered [stage report](docs/reports/TEMPLATE.md) for meaningful development work and update `PROGRESS.md`—including partial or blocked work.
+6. Open a [pull request](https://github.com/appyx123/Nodus-Studio/pulls) with the motivation, scope, and verification results.
+
+Bug reports are most useful with your OS/session, tool versions, reproduction steps, and a minimal package fixture. **Do not post credentials, private tokens, or sensitive logs in public issues.**
+
+## Documentation
+
+- [Architecture and acceptance criteria](master_project_blueprint_ai_context_specification.md)
+- [Current progress and next actions](PROGRESS.md)
+- [Component package contract](docs/nodpkg-v1.md)
+- [Implementation and verification evidence](docs/reports/005-phase-1-component-loader.md)
+- [Stage report archive](docs/reports/)
+- [Agent collaboration rules](AGENTS.md)
+
+## License
+
+[MIT](LICENSE) © 2026 Muhammad Rafli.
+
+---
+
+<div align="center">
+
+**Connect the circuit. Understand the system. Build in the open.**
+
+</div>

@@ -9,7 +9,7 @@ Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint
 - **Status subtahap:** `completed`; loader/katalog dan smoke test terbatas terverifikasi pada laporan 005.
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `in-progress`; kanvas interaktif, kabel, dan netlist belum dikerjakan.
-- **Laporan terbaru:** [006 — Publikasi repository GitHub](docs/reports/006-phase-1-github-publication.md). Bukti implementasi/tes Langkah 2 tetap pada [laporan 005](docs/reports/005-phase-1-component-loader.md).
+- **Laporan terbaru:** [007 — Penyegaran README open source](docs/reports/007-phase-1-readme-refresh.md). Pembaruan dokumentasi `completed`; implementasi/tes Langkah 2 tetap pada [laporan 005](docs/reports/005-phase-1-component-loader.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`; publikasi implementasi `10dd73b` terverifikasi.
 - **Langkah berikutnya:** Fase 1 Langkah 3 — renderer/kanvas interaktif (`not-started` untuk kanvas; katalog sudah tersedia).
 
@@ -65,7 +65,7 @@ Stack tetap SolidJS 1.9.18, TypeScript 7.0.2, Vite 8.3.6, Tailwind 4.3.4, CLI/AP
 2. Tambahkan infinite pan/zoom, snap 25.4 unit SVG (2.54 mm), drag-and-drop, dan namespace ID/referensi SVG. Uji beberapa LED identik serta anchor saat viewport/posisi berubah.
 3. Verifikasi interaksi pada desktop target; jangan mengklaim acceptance kanvas dari typecheck saja.
 4. Setelah Langkah 3 selesai, Langkah 4 menambah `WireLayer.tsx` dan netlist Rust: endpoint tervalidasi, routing Manhattan, warna kabel, serta hapus instance/kabel yang memperbarui graf. Belum ada resolusi listrik.
-5. Simpan laporan `007` atau nomor berikutnya yang belum terpakai dan perbarui file ini. Jangan mengubah laporan lama untuk memasukkan hasil baru.
+5. Simpan laporan `008` atau nomor berikutnya yang belum terpakai dan perbarui file ini. Jangan mengubah laporan lama untuk memasukkan hasil baru.
 
 ## Laporan
 
@@ -77,4 +77,6 @@ Stack tetap SolidJS 1.9.18, TypeScript 7.0.2, Vite 8.3.6, Tailwind 4.3.4, CLI/AP
 
 - [006 — Fase 1: publikasi repository GitHub](docs/reports/006-phase-1-github-publication.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `007` (periksa ulang sebelum membuat file).
+- [007 — Fase 1: penyegaran README open source](docs/reports/007-phase-1-readme-refresh.md)
+
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `008` (periksa ulang sebelum membuat file).
