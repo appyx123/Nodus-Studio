@@ -1,0 +1,7 @@
+{
+  "identifier": "main-components",
+  "description": "Read validated built-in component metadata and SVG in the local main window.",
+  "local": true,
+  "windows": ["main"],
+  "permissions": ["allow-list-components"]
+}

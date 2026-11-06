@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "compatibility": { "engine_api": 1 },
+  "component": {
+    "id": "basic-led",
+    "name": "Red LED",
+    "category": "Basic",
+    "author": "Nodus Community",
+    "version": "1.0.0",
+    "description": "A 5 mm red LED. Visual fixture only in Phase 1; no electrical simulation."
+  },
+  "electrical": { "operating_voltage_min": 0.0, "operating_voltage_max": 5.0 },
+  "pins": [
+    { "id": "A", "name": "Anode (+)", "type": "input", "svg_anchor": "pin-anode" },
+    { "id": "K", "name": "Cathode (-)", "type": "input", "svg_anchor": "pin-cathode" }
+  ],
+  "controls": [],
+  "visuals": [
+    { "id": "brightness", "type": "number", "target": "dyn-light", "property": "opacity", "min": 0.0, "max": 1.0, "default": 0.15 }
+  ]
+}
