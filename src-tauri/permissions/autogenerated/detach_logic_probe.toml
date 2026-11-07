@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-detach-logic-probe"
+description = "Enables the detach_logic_probe command without any pre-configured scope."
+commands.allow = ["detach_logic_probe"]
+
+[[permission]]
+identifier = "deny-detach-logic-probe"
+description = "Denies the detach_logic_probe command without any pre-configured scope."
+commands.deny = ["detach_logic_probe"]

@@ -1,5 +1,6 @@
 use super::{
     bus::SerialBuffer,
+    logic_analyzer::LogicAnalyzer,
     scheduler::{RunState, HALF_NS_PER_16MHZ_CYCLE},
     CircuitState, Endpoint, EventPayload, LogicLevel, PinMode, ScheduledEvent, Scheduler, SimTime,
 };
@@ -7,6 +8,7 @@ use crate::mcu::Microcontroller;
 use crate::sandbox::lua_host::{HostResult, InstanceDiagnostic, LuaSandboxInstance};
 use crate::NodusError;
 use std::collections::BTreeMap;
+use std::sync::{Arc, Mutex};
 
 const MCU_SLICE_CYCLES: u64 = 1_600;
 
@@ -19,6 +21,7 @@ pub struct SimulationRuntime {
     scheduler: Scheduler,
     levels: BTreeMap<Endpoint, LogicLevel>,
     diagnostics: Vec<InstanceDiagnostic>,
+    analyzer: Option<Arc<Mutex<LogicAnalyzer>>>,
 }
 
 impl SimulationRuntime {
@@ -34,6 +37,7 @@ impl SimulationRuntime {
             scheduler,
             levels: BTreeMap::new(),
             diagnostics: Vec::new(),
+            analyzer: None,
         };
         for program in circuit.instance_programs() {
             let id = program.instance_id;
@@ -61,6 +65,15 @@ impl SimulationRuntime {
         sync_mcu_to_circuit(&instance_id, mcu.as_mut(), circuit);
         self.mcus.insert(instance_id, mcu);
         self.detect_edges(circuit)
+    }
+
+    pub fn attach_logic_analyzer(&mut self, analyzer: Arc<Mutex<LogicAnalyzer>>) {
+        if let Ok(mut lock) = analyzer.lock() {
+            for (endpoint, level) in &self.levels {
+                lock.record_edge(endpoint, *level, self.scheduler.now());
+            }
+        }
+        self.analyzer = Some(analyzer);
     }
 
     pub fn now(&self) -> SimTime {
@@ -263,6 +276,13 @@ impl SimulationRuntime {
                 .instances
                 .get(&endpoint.instance_id)
                 .is_some_and(|inst| inst.fault().is_none());
+            if before != *level {
+                if let Some(analyzer) = &self.analyzer {
+                    if let Ok(mut lock) = analyzer.lock() {
+                        lock.record_edge(endpoint, *level, self.scheduler.now());
+                    }
+                }
+            }
             if before != *level && live {
                 self.scheduler.schedule_after(
                     SimTime::ZERO,

@@ -72,15 +72,51 @@ pub async fn control_simulation(
     streamer: tauri::State<'_, Arc<FrameStreamer>>,
     compiler: tauri::State<'_, Arc<CompilerController>>,
     serial: tauri::State<'_, Arc<SerialBuffer>>,
+    analyzer: tauri::State<'_, Arc<std::sync::Mutex<crate::engine::logic_analyzer::LogicAnalyzer>>>,
     action: SimulationAction,
 ) -> Result<SimulationStatus, NodusError> {
-    controller.control_with_context(
+    controller.control_with_all_context(
         action,
         &circuit,
         &streamer,
         Some(Arc::clone(&compiler)),
         Some(Arc::clone(&serial)),
+        Some(Arc::clone(&analyzer)),
     )
+}
+
+#[tauri::command]
+pub async fn get_logic_analyzer_data(
+    analyzer: tauri::State<'_, Arc<std::sync::Mutex<crate::engine::logic_analyzer::LogicAnalyzer>>>,
+) -> Result<crate::engine::logic_analyzer::LogicAnalyzerSnapshot, NodusError> {
+    let guard = analyzer
+        .lock()
+        .map_err(|_| NodusError::Circuit("Logic analyzer lock poisoned".into()))?;
+    Ok(guard.snapshot(crate::engine::SimTime::ZERO))
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn attach_logic_probe(
+    analyzer: tauri::State<'_, Arc<std::sync::Mutex<crate::engine::logic_analyzer::LogicAnalyzer>>>,
+    request: crate::engine::logic_analyzer::AttachProbeRequest,
+) -> Result<(), NodusError> {
+    let mut guard = analyzer
+        .lock()
+        .map_err(|_| NodusError::Circuit("Logic analyzer lock poisoned".into()))?;
+    guard.attach_probe(request.channel_id, request.name, request.endpoint);
+    Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn detach_logic_probe(
+    analyzer: tauri::State<'_, Arc<std::sync::Mutex<crate::engine::logic_analyzer::LogicAnalyzer>>>,
+    channel_id: usize,
+) -> Result<(), NodusError> {
+    let mut guard = analyzer
+        .lock()
+        .map_err(|_| NodusError::Circuit("Logic analyzer lock poisoned".into()))?;
+    guard.detach_probe(channel_id);
+    Ok(())
 }
 
 #[tauri::command(rename_all = "snake_case")]

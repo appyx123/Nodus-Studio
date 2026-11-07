@@ -62,6 +62,9 @@ test("catalog grants only local discovery and retains a production CSP", () => {
     "allow-load-project",
     "allow-export-project-json",
     "allow-import-project-json",
+    "allow-get-logic-analyzer-data",
+    "allow-attach-logic-probe",
+    "allow-detach-logic-probe",
   ]);
   assert.deepEqual(config.bundle.resources, { "../components-registry/": "components-registry/" });
   assert.ok(config.app.security.csp.includes("default-src 'self'"));

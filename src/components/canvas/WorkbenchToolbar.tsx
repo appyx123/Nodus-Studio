@@ -17,6 +17,8 @@ export interface WorkbenchToolbarProps {
   onToggleEditor: () => void;
   mqttOpen: boolean;
   onToggleMqtt: () => void;
+  analyzerOpen: boolean;
+  onToggleAnalyzer: () => void;
   onSaveProject: () => void;
   onOpenProject: (event: Event) => void;
 }
@@ -117,6 +119,13 @@ export function WorkbenchToolbar(props: WorkbenchToolbarProps) {
           onClick={() => props.onToggleMqtt()}
         >
           MQTT Bridge
+        </button>
+        <button
+          class={buttonClass}
+          aria-pressed={props.analyzerOpen}
+          onClick={() => props.onToggleAnalyzer()}
+        >
+          Logic Analyzer
         </button>
       </div>
     </>

@@ -18,6 +18,9 @@ pub fn run() -> Result<(), NodusError> {
         .manage(std::sync::Arc::new(compiler::CompilerController::default()))
         .manage(std::sync::Arc::new(engine::bus::SerialBuffer::default()))
         .manage(std::sync::Arc::new(mqtt::MqttBridgeController::default()))
+        .manage(std::sync::Arc::new(std::sync::Mutex::new(
+            engine::logic_analyzer::LogicAnalyzer::default(),
+        )))
         .manage(ipc::simulation::SimulationController::default())
         .invoke_handler(tauri::generate_handler![
             ipc::commands::list_components,
@@ -36,7 +39,10 @@ pub fn run() -> Result<(), NodusError> {
             ipc::commands::save_project,
             ipc::commands::load_project,
             ipc::commands::export_project_json,
-            ipc::commands::import_project_json
+            ipc::commands::import_project_json,
+            ipc::commands::get_logic_analyzer_data,
+            ipc::commands::attach_logic_probe,
+            ipc::commands::detach_logic_probe
         ])
         .run(tauri::generate_context!())?;
     Ok(())

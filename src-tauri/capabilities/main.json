@@ -20,6 +20,9 @@
     "allow-save-project",
     "allow-load-project",
     "allow-export-project-json",
-    "allow-import-project-json"
+    "allow-import-project-json",
+    "allow-get-logic-analyzer-data",
+    "allow-attach-logic-probe",
+    "allow-detach-logic-probe"
   ]
 }

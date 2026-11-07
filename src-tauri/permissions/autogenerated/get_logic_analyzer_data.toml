@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-get-logic-analyzer-data"
+description = "Enables the get_logic_analyzer_data command without any pre-configured scope."
+commands.allow = ["get_logic_analyzer_data"]
+
+[[permission]]
+identifier = "deny-get-logic-analyzer-data"
+description = "Denies the get_logic_analyzer_data command without any pre-configured scope."
+commands.deny = ["get_logic_analyzer_data"]

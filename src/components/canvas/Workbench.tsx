@@ -2,8 +2,10 @@ import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-j
 import type { Resource } from "solid-js";
 import { connectedNetCount, editCircuit, EMPTY_CIRCUIT, sameEndpoint } from "../../store/circuitStore";
 import { editorOpen, setEditorOpen, sketchSource } from "../../store/editorStore";
+import { analyzerOpen, setAnalyzerOpen } from "../../store/logicAnalyzerStore";
 import { mqttOpen, setMqttOpen } from "../../store/mqttStore";
 import type { CircuitEdit, CircuitSnapshot, ComponentPackage, Endpoint, RegistryCatalog, WireColor } from "../../types/nodpkg";
+import LogicAnalyzerPanel from "../analyzer/LogicAnalyzerPanel";
 import CodeEditor from "../editor/CodeEditor";
 import SerialMonitor from "../editor/SerialMonitor";
 import MqttBridgePanel from "../mqtt/MqttBridgePanel";
@@ -307,6 +309,8 @@ export default function Workbench(props: Props) {
             onToggleEditor={() => setEditorOpen((open) => !open)}
             mqttOpen={mqttOpen()}
             onToggleMqtt={() => setMqttOpen((open) => !open)}
+            analyzerOpen={analyzerOpen()}
+            onToggleAnalyzer={() => setAnalyzerOpen((open) => !open)}
             onSaveProject={() => {
               void handleSaveAction(nodes(), circuit(), viewport(), sketchSource(), setMessage, setErrorMessage);
             }}
@@ -388,6 +392,7 @@ export default function Workbench(props: Props) {
         </aside>
       </Show>
       <MqttBridgePanel />
+      <Show when={analyzerOpen()}><LogicAnalyzerPanel selectedEndpoint={pendingPin()} /></Show>
     </div>
   );
 }

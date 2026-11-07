@@ -1,5 +1,6 @@
 pub mod bus;
 pub mod circuit_graph;
+pub mod logic_analyzer;
 pub mod pin;
 pub mod runtime;
 pub mod scheduler;

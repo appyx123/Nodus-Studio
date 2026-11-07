@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-attach-logic-probe"
+description = "Enables the attach_logic_probe command without any pre-configured scope."
+commands.allow = ["attach_logic_probe"]
+
+[[permission]]
+identifier = "deny-attach-logic-probe"
+description = "Denies the attach_logic_probe command without any pre-configured scope."
+commands.deny = ["attach_logic_probe"]
