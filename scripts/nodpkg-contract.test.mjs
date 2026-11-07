@@ -38,6 +38,22 @@ test("TypeScript rejects an unknown pin kind from the shared fixture", () => {
   assert.ok(result.stdout.includes("TS2322") && result.stdout.includes("external-code"), result.stdout);
 });
 
+test("TypeScript manifest contract accepts mcu backend avr_atmega328p and rejects unknown backend", () => {
+  const uno = structuredClone(fixture);
+  uno.component.id = "mcu-arduino-uno";
+  uno.mcu = { backend: "avr_atmega328p" };
+  const okResult = checkTypes(uno);
+  assert.ifError(okResult.error);
+  assert.equal(okResult.status, 0, okResult.stdout + okResult.stderr);
+
+  const badMcu = structuredClone(uno);
+  badMcu.mcu.backend = "unknown_core";
+  const badResult = checkTypes(badMcu);
+  assert.ifError(badResult.error);
+  assert.ok(badResult.status !== null && badResult.status !== 0, badResult.stdout + badResult.stderr);
+  assert.ok(badResult.stdout.includes("TS2322") && badResult.stdout.includes("unknown_core"), badResult.stdout);
+});
+
 function checkCircuitTypes(source) {
   const directory = mkdtempSync(join(root, ".contract-test-"));
   try {

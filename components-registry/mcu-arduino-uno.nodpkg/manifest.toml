@@ -1,0 +1,160 @@
+schema_version = 1
+
+[compatibility]
+engine_api = 1
+
+[component]
+id = "mcu-arduino-uno"
+name = "Arduino Uno R3"
+category = "Microcontroller"
+author = "Nodus Community"
+version = "1.0.0"
+description = "ATmega328P 16 MHz development board with digital/PWM I/O, analog inputs, UART, and onboard L (D13) LED."
+
+[electrical]
+operating_voltage_min = 4.5
+operating_voltage_max = 5.5
+
+[mcu]
+backend = "avr_atmega328p"
+
+[[pins]]
+id = "VCC"
+name = "5V"
+type = "power"
+svg_anchor = "pin-vcc"
+
+[[pins]]
+id = "GND"
+name = "GND"
+type = "ground"
+svg_anchor = "pin-gnd"
+
+[[pins]]
+id = "D0"
+name = "D0 (RX)"
+type = "bidirectional"
+svg_anchor = "pin-d0"
+
+[[pins]]
+id = "D1"
+name = "D1 (TX)"
+type = "bidirectional"
+svg_anchor = "pin-d1"
+
+[[pins]]
+id = "D2"
+name = "D2"
+type = "bidirectional"
+svg_anchor = "pin-d2"
+
+[[pins]]
+id = "D3"
+name = "D3 (PWM)"
+type = "bidirectional"
+svg_anchor = "pin-d3"
+
+[[pins]]
+id = "D4"
+name = "D4"
+type = "bidirectional"
+svg_anchor = "pin-d4"
+
+[[pins]]
+id = "D5"
+name = "D5 (PWM)"
+type = "bidirectional"
+svg_anchor = "pin-d5"
+
+[[pins]]
+id = "D6"
+name = "D6 (PWM)"
+type = "bidirectional"
+svg_anchor = "pin-d6"
+
+[[pins]]
+id = "D7"
+name = "D7"
+type = "bidirectional"
+svg_anchor = "pin-d7"
+
+[[pins]]
+id = "D8"
+name = "D8"
+type = "bidirectional"
+svg_anchor = "pin-d8"
+
+[[pins]]
+id = "D9"
+name = "D9 (PWM)"
+type = "bidirectional"
+svg_anchor = "pin-d9"
+
+[[pins]]
+id = "D10"
+name = "D10 (PWM)"
+type = "bidirectional"
+svg_anchor = "pin-d10"
+
+[[pins]]
+id = "D11"
+name = "D11 (PWM)"
+type = "bidirectional"
+svg_anchor = "pin-d11"
+
+[[pins]]
+id = "D12"
+name = "D12"
+type = "bidirectional"
+svg_anchor = "pin-d12"
+
+[[pins]]
+id = "D13"
+name = "D13 (LED)"
+type = "bidirectional"
+svg_anchor = "pin-d13"
+
+[[pins]]
+id = "A0"
+name = "A0"
+type = "bidirectional"
+svg_anchor = "pin-a0"
+
+[[pins]]
+id = "A1"
+name = "A1"
+type = "bidirectional"
+svg_anchor = "pin-a1"
+
+[[pins]]
+id = "A2"
+name = "A2"
+type = "bidirectional"
+svg_anchor = "pin-a2"
+
+[[pins]]
+id = "A3"
+name = "A3"
+type = "bidirectional"
+svg_anchor = "pin-a3"
+
+[[pins]]
+id = "A4"
+name = "A4 (SDA)"
+type = "bidirectional"
+svg_anchor = "pin-a4"
+
+[[pins]]
+id = "A5"
+name = "A5 (SCL)"
+type = "bidirectional"
+svg_anchor = "pin-a5"
+
+[[visuals]]
+id = "led_builtin"
+type = "number"
+target = "dyn-led-l"
+property = "opacity"
+min = 0.0
+max = 1.0
+default = 0.15

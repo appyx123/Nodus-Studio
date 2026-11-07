@@ -4,13 +4,15 @@
 
 Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint tetap menjadi sumber kebenaran persyaratan; file ini merangkum keadaan implementasi.
 
-- **Fase aktif:** Fase 3 — Integrasi Editor Kode, `arduino-cli`, & Emulasi MCU Pertama (`in-progress`).
-- **Subtahap terakhir:** Fase 3 Langkah 3 — trait `Microcontroller`, `avr_uno.rs`, dan integrasi `SimulationRuntime` (`completed`).
+- **Fase aktif:** Fase 3 — Integrasi Editor Kode, `arduino-cli`, & Emulasi MCU Pertama (`completed`).
+- **Subtahap terakhir:** Fase 3 Langkah 4 — paket `mcu-arduino-uno.nodpkg`, kontrak MCU, dan verifikasi E2E (`completed`).
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 1 telah memiliki bukti uji; pemeriksaan input fisik manual dicatat `not-run`).
-- **Laporan terbaru:** [016 — Trait `Microcontroller` dan emulator `avr_uno.rs`](docs/reports/016-phase-3-mcu-trait-and-avr-uno.md).
+- **Status Fase 2:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 2 telah memiliki bukti uji).
+- **Status Fase 3:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 3 telah memiliki bukti uji).
+- **Laporan terbaru:** [017 — Paket `mcu-arduino-uno.nodpkg`, kontrak MCU, dan validasi E2E](docs/reports/017-phase-3-arduino-uno-package-and-e2e.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Fase 3 Langkah 4 — perluasan skema manifest `.nodpkg` untuk MCU, paket `mcu-arduino-uno.nodpkg`, dan verifikasi end-to-end (`not-started`).
+- **Langkah berikutnya:** Fase 4 — Sensor, Bus, & MQTT (`not-started`).
 
 ## Ringkasan roadmap
 
@@ -18,7 +20,7 @@ Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint
 | --- | --- | --- |
 | 1 — Fondasi dan kanvas | `completed` | Scaffold Tauri v2 + SolidJS, loader `.nodpkg` v1, katalog, kanvas pan/zoom/snap/drag, `WireLayer.tsx` Manhattan, dan netlist Rust (`circuit_graph.rs`) lulus 56 tes Rust, 24 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 2 — Mesin simulasi dan Lua | `completed` | `SimTime` half-ns, `Scheduler`, resolusi net digital, sandbox Lua 5.4 (`mlua`), streamer biner `NDFR` 60 Hz, `basic-power-source`/`basic-pushbutton`/`basic-led`, lulus 70 tes Rust, 26 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
-| 3 — Editor, compiler, dan AVR | `in-progress` | Langkah 1–3 selesai: spike backend AVR (`avr-emulator 0.1.2`), `arduino_cli.rs`, `uart.rs`, `CodeEditor.tsx`, `SerialMonitor.tsx`, `traits.rs`, dan `avr_uno.rs` lulus 74 tes Rust dan 26 tes Node |
+| 3 — Editor, compiler, dan AVR | `completed` | Langkah 1–4 selesai: spike backend AVR, `arduino-cli 1.5.1` + `arduino:avr@1.8.8`, `arduino_cli.rs`, `uart.rs`, `CodeEditor.tsx`, `SerialMonitor.tsx`, `traits.rs`, `avr_uno.rs`, paket `mcu-arduino-uno.nodpkg`, lulus 75 tes Rust, 27 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 4 — Sensor, bus, dan MQTT | `not-started` | Menunggu Fase 3 selesai dan teruji |
 | 5 — Penyimpanan dan distribusi | `not-started` | Menunggu Fase 4 selesai dan teruji |
 
@@ -80,5 +82,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [014 — Fase 3: spike evaluasi backend emulator AVR](docs/reports/014-phase-3-avr-backend-spike.md)
 - [015 — Fase 3: integrasi editor kode, Serial Monitor, dan `arduino_cli.rs`](docs/reports/015-phase-3-editor-serial-and-arduino-cli.md)
 - [016 — Fase 3: trait `Microcontroller` dan emulator `avr_uno.rs`](docs/reports/016-phase-3-mcu-trait-and-avr-uno.md)
+- [017 — Fase 3: paket `mcu-arduino-uno.nodpkg`, kontrak MCU, dan validasi E2E](docs/reports/017-phase-3-arduino-uno-package-and-e2e.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `017` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `018` (periksa ulang sebelum membuat file).

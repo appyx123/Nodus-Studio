@@ -249,4 +249,18 @@ fn json_wire_shape_matches_frontend_contract() {
         let json = serde_json::to_value(parse_manifest(&source).unwrap()).unwrap();
         assert_eq!(json["pins"][0]["type"], kind);
     }
+
+    let mcu_toml = format!("{MANIFEST}\n[mcu]\nbackend = \"avr_atmega328p\"\n");
+    let mcu_manifest = parse_manifest(&mcu_toml).unwrap();
+    assert_eq!(
+        mcu_manifest.mcu,
+        Some(McuConfig {
+            backend: McuBackend::AvrAtmega328p
+        })
+    );
+    let mcu_json = serde_json::to_value(mcu_manifest).unwrap();
+    assert_eq!(mcu_json["mcu"]["backend"], "avr_atmega328p");
+
+    let bad_mcu = format!("{MANIFEST}\n[mcu]\nbackend = \"unsupported_arch\"\n");
+    assert!(parse_manifest(&bad_mcu).is_err());
 }

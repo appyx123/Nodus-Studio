@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-compile-sketch"
+description = "Enables the compile_sketch command without any pre-configured scope."
+commands.allow = ["compile_sketch"]
+
+[[permission]]
+identifier = "deny-compile-sketch"
+description = "Denies the compile_sketch command without any pre-configured scope."
+commands.deny = ["compile_sketch"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-cancel-compilation"
+description = "Enables the cancel_compilation command without any pre-configured scope."
+commands.allow = ["cancel_compilation"]
+
+[[permission]]
+identifier = "deny-cancel-compilation"
+description = "Denies the cancel_compilation command without any pre-configured scope."
+commands.deny = ["cancel_compilation"]

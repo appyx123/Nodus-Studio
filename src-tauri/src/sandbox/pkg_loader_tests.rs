@@ -319,7 +319,12 @@ fn builtin_led_matches_the_shared_manifest_contract() {
         .collect();
     assert_eq!(
         ids,
-        vec!["basic-led", "basic-power-source", "basic-pushbutton"]
+        vec![
+            "basic-led",
+            "basic-power-source",
+            "basic-pushbutton",
+            "mcu-arduino-uno",
+        ]
     );
     let actual = serde_json::to_value(&catalog.packages[0].manifest).unwrap();
     let expected: serde_json::Value = serde_json::from_str(

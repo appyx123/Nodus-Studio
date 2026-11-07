@@ -231,7 +231,7 @@ fn attach_firmware(
         return;
     };
     for prog in guard.instance_programs() {
-        if prog.manifest.component.id == "mcu-arduino-uno" {
+        if prog.manifest.mcu.is_some() {
             let mut uno = AvrUno::new();
             let ok = if !art.hex.is_empty() {
                 uno.load_hex(&art.hex).is_ok()

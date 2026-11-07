@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 406.4 203.2">
+  <title>Arduino Uno R3</title>
+  <desc>Arduino Uno R3 board with 2.54 mm grid-aligned headers and onboard L LED.</desc>
+  <rect x="6" y="6" width="394.4" height="191.2" rx="10" fill="#0f766e" stroke="#14b8a6" stroke-width="2"/>
+  <rect x="18" y="38" width="44" height="58" rx="4" fill="#a1a1aa" stroke="#52525b" stroke-width="1.5"/>
+  <rect x="130" y="92" width="160" height="44" rx="4" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+  <text x="210" y="74" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#f0fdfa">ARDUINO UNO</text>
+  <text x="210" y="118" text-anchor="middle" font-family="monospace" font-size="10" fill="#a1a1aa">ATmega328P</text>
+  <circle id="dyn-led-l" cx="95" cy="70" r="7" fill="#fde047" opacity="0.15"/>
+  <text x="95" y="88" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#f0fdfa">L (D13)</text>
+  <circle id="pin-d13" cx="25.4" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d12" cx="50.8" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d11" cx="76.2" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d10" cx="101.6" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d9" cx="127.0" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d8" cx="152.4" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d7" cx="203.2" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d6" cx="228.6" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d5" cx="254.0" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d4" cx="279.4" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d3" cx="304.8" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d2" cx="330.2" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d1" cx="355.6" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-d0" cx="381.0" cy="25.4" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-vcc" cx="76.2" cy="177.8" r="4.2" fill="#ef4444" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-gnd" cx="101.6" cy="177.8" r="4.2" fill="#3f3f46" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-a0" cx="203.2" cy="177.8" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-a1" cx="228.6" cy="177.8" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-a2" cx="254.0" cy="177.8" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-a3" cx="279.4" cy="177.8" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-a4" cx="304.8" cy="177.8" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+  <circle id="pin-a5" cx="330.2" cy="177.8" r="4.2" fill="#d4d4d8" stroke="#18181b" stroke-width="1"/>
+</svg>

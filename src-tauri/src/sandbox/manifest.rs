@@ -13,6 +13,20 @@ pub struct Manifest {
     pub controls: Vec<SliderControl>,
     #[serde(default)]
     pub visuals: Vec<NumberVisual>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mcu: Option<McuConfig>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct McuConfig {
+    pub backend: McuBackend,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum McuBackend {
+    AvrAtmega328p,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

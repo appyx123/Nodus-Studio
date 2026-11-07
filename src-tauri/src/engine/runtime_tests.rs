@@ -1,5 +1,6 @@
 use super::test_support::{connect, endpoint, node, wire};
 use super::*;
+use crate::mcu::Microcontroller;
 use crate::sandbox::pkg_loader::scan_registry;
 use std::path::Path;
 
@@ -7,7 +8,7 @@ fn registry_state() -> CircuitState {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../components-registry");
     let catalog = scan_registry(&root).unwrap();
     assert!(catalog.diagnostics.is_empty(), "{:?}", catalog.diagnostics);
-    assert_eq!(catalog.packages.len(), 3);
+    assert_eq!(catalog.packages.len(), 4);
     let mut state = CircuitState::default();
     state.register_catalog(&catalog);
     state
@@ -141,4 +142,79 @@ fn led_glow_tracks_pwm_duty_cycle_and_pin_conflict_turns_led_off() {
         .unwrap();
     assert!(circuit.resolve_nets().iter().any(|net| net.conflict));
     assert!((brightness(&runtime, &node(2)) - 0.15).abs() < 1e-6);
+}
+
+#[test]
+fn arduino_uno_drives_external_led_and_reads_pushbutton_in_runtime() {
+    let mut circuit = registry_state();
+    add_part(&mut circuit, 0, "mcu-arduino-uno");
+    add_part(&mut circuit, 1, "basic-led");
+    add_part(&mut circuit, 2, "basic-pushbutton");
+
+    // Connect Uno D13 -> LED A, Uno GND -> LED K
+    circuit
+        .edit(connect(0, endpoint(0, "D13"), endpoint(1, "A")))
+        .unwrap();
+    circuit
+        .edit(connect(1, endpoint(0, "GND"), endpoint(1, "K")))
+        .unwrap();
+
+    // Connect Uno VCC -> Button IN, Button OUT -> Uno D2
+    circuit
+        .edit(connect(2, endpoint(0, "VCC"), endpoint(2, "IN")))
+        .unwrap();
+    circuit
+        .edit(connect(3, endpoint(2, "OUT"), endpoint(0, "D2")))
+        .unwrap();
+
+    let mut runtime = SimulationRuntime::start(&mut circuit).unwrap();
+    let mut uno = crate::mcu::AvrUno::new();
+
+    let sketch = r#"
+void setup() {
+  pinMode(13, OUTPUT);
+  pinMode(2, INPUT);
+}
+void loop() {
+  digitalWrite(13, digitalRead(2));
+}
+"#;
+    let compiler = crate::compiler::CompilerController::default();
+    let res = compiler
+        .compile(crate::compiler::CompileRequest {
+            sketch_source: sketch.into(),
+            fqbn: Some("arduino:avr:uno".into()),
+        })
+        .unwrap();
+    assert!(res.success, "compile error: {}", res.stderr);
+    let art = compiler.latest_artifact().unwrap();
+    uno.load_hex(&art.hex).unwrap();
+
+    runtime
+        .attach_mcu(node(0), Box::new(uno), &mut circuit)
+        .unwrap();
+
+    // Button unpressed (OUT is HighZ/Low): D13 should stay LOW, LED off (0.15)
+    runtime
+        .advance(&mut circuit, SimTime::from_ns(2_000_000).unwrap())
+        .unwrap();
+    assert!((brightness(&runtime, &node(1)) - 0.15).abs() < 1e-6);
+
+    // Press button: Uno VCC (HIGH) flows to D2, sketch sets D13 HIGH, LED on (1.0)
+    runtime
+        .set_control(&mut circuit, &node(2), "pressed", 1.0)
+        .unwrap();
+    runtime
+        .advance(&mut circuit, SimTime::from_ns(2_000_000).unwrap())
+        .unwrap();
+    assert!((brightness(&runtime, &node(1)) - 1.0).abs() < 1e-6);
+
+    // Release button: D13 turns LOW again, wait 10 ms (> 5 ms LED PWM window), LED turns off (0.15)
+    runtime
+        .set_control(&mut circuit, &node(2), "pressed", 0.0)
+        .unwrap();
+    runtime
+        .advance(&mut circuit, SimTime::from_ns(10_000_000).unwrap())
+        .unwrap();
+    assert!((brightness(&runtime, &node(1)) - 0.15).abs() < 1e-6);
 }

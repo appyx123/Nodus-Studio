@@ -27,6 +27,12 @@ export interface NumberVisual {
   default: number;
 }
 
+export type McuBackend = "avr_atmega328p";
+
+export interface McuConfig {
+  backend: McuBackend;
+}
+
 export interface ComponentManifest {
   schema_version: 1;
   compatibility: { engine_api: 1 };
@@ -42,6 +48,7 @@ export interface ComponentManifest {
   pins: Pin[];
   controls: SliderControl[];
   visuals: NumberVisual[];
+  mcu?: McuConfig;
 }
 
 export interface ComponentPackage {

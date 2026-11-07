@@ -96,7 +96,7 @@ def main():
         process = subprocess.Popen([str(executable)], cwd=working_directory,
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         try:
-            records = wait_for(process, lambda rows: contains(rows, "3 package(s) loaded")
+            records = wait_for(process, lambda rows: contains(rows, "4 package(s) loaded")
                                and contains(rows, "Red LED") and contains(rows, "Rejected packages")
                                and contains(rows, "invalid-smoke.nodpkg"),
                                "relocated resources load the LED and isolate an invalid package")
@@ -158,7 +158,7 @@ def main():
 
             shutil.rmtree(invalid)
             reload_catalog(records)
-            records = wait_for(process, lambda rows: contains(rows, "3 package(s) loaded")
+            records = wait_for(process, lambda rows: contains(rows, "4 package(s) loaded")
                                and not contains(rows, "Rejected packages"),
                                "Reload removes the resolved diagnostic")
 
@@ -170,7 +170,7 @@ def main():
 
             shutil.copytree(BUILT_REGISTRY, registry)
             reload_catalog(records)
-            wait_for(process, lambda rows: contains(rows, "3 package(s) loaded")
+            wait_for(process, lambda rows: contains(rows, "4 package(s) loaded")
                      and contains(rows, "Red LED") and not contains(rows, "Component discovery failed:"),
                      "Reload recovers after the registry is restored")
         finally:
