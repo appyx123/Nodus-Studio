@@ -57,11 +57,58 @@ export function pinWorldPoint(
   instancePosition: Point,
   localPin: Point,
   viewBoxOrigin: Point = { x: 0, y: 0 },
+  rotation = 0,
 ): Point {
   const round = (value: number) => Number(value.toFixed(4)) || 0;
+  const relX = localPin.x - viewBoxOrigin.x;
+  const relY = localPin.y - viewBoxOrigin.y;
+  let rx = relX;
+  let ry = relY;
+  const normRot = ((rotation % 360) + 360) % 360;
+  if (normRot === 90) {
+    rx = -relY;
+    ry = relX;
+  } else if (normRot === 180) {
+    rx = -relX;
+    ry = -relY;
+  } else if (normRot === 270) {
+    rx = relY;
+    ry = -relX;
+  }
   return {
-    x: round(instancePosition.x + localPin.x - viewBoxOrigin.x),
-    y: round(instancePosition.y + localPin.y - viewBoxOrigin.y),
+    x: round(instancePosition.x + rx),
+    y: round(instancePosition.y + ry),
+  };
+}
+
+export function fitViewToNodes(
+  nodePositions: Point[],
+  stageWidth: number,
+  stageHeight: number,
+): Viewport {
+  if (nodePositions.length === 0) return INITIAL_VIEWPORT;
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const pos of nodePositions) {
+    minX = Math.min(minX, pos.x);
+    minY = Math.min(minY, pos.y);
+    maxX = Math.max(maxX, pos.x + 100);
+    maxY = Math.max(maxY, pos.y + 100);
+  }
+  const padding = 60;
+  const contentWidth = Math.max(50, maxX - minX + padding * 2);
+  const contentHeight = Math.max(50, maxY - minY + padding * 2);
+  const zoomX = stageWidth / contentWidth;
+  const zoomY = stageHeight / contentHeight;
+  const zoom = Math.max(MIN_ZOOM, Math.min(2.0, Math.min(zoomX, zoomY)));
+  const centerX = (minX + maxX) / 2;
+  const centerY = (minY + maxY) / 2;
+  return {
+    x: stageWidth / 2 - centerX * zoom,
+    y: stageHeight / 2 - centerY * zoom,
+    zoom,
   };
 }
 

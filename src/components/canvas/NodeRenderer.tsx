@@ -10,6 +10,8 @@ export interface CanvasNode {
   position: Point;
   viewBoxOrigin: Point;
   pinPositions: Map<string, Point>;
+  rotation?: number;
+  label?: string;
 }
 
 interface Props {
@@ -58,6 +60,11 @@ export default function NodeRenderer(props: Props) {
       const isPending = Boolean(active && active.instance_id === id && active.pin_id === pinId);
       pinEl.classList.toggle("is-active-pin", isPending);
       pinEl.setAttribute("aria-pressed", String(isPending));
+      if (!pinEl.querySelector("title") && pinId) {
+        const titleEl = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        titleEl.textContent = `Pin: ${pinId}`;
+        pinEl.appendChild(titleEl);
+      }
     }
   });
 
@@ -67,9 +74,17 @@ export default function NodeRenderer(props: Props) {
   }
 
   return (
-    <g data-instance-id={props.node.instanceId} data-x={props.node.position.x} data-y={props.node.position.y}
-      transform={`translate(${props.node.position.x} ${props.node.position.y})`}
-      role="button" tabIndex={0} aria-label={`${props.node.pkg.manifest.component.name} instance ${props.node.instanceId}`}
+    <g
+      data-instance-id={props.node.instanceId}
+      data-x={props.node.position.x}
+      data-y={props.node.position.y}
+      transform={
+        props.node.rotation
+          ? `translate(${props.node.position.x} ${props.node.position.y}) rotate(${props.node.rotation})`
+          : `translate(${props.node.position.x} ${props.node.position.y})`
+      }
+      role="button"
+      tabIndex={0} aria-label={`${props.node.pkg.manifest.component.name} instance ${props.node.instanceId}`}
       aria-pressed={props.selected} class="canvas-node" classList={{ "is-selected": props.selected }}
       onPointerDown={(event) => {
         if (targetPin(event.target)) {
