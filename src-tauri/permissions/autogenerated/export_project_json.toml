@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-export-project-json"
+description = "Enables the export_project_json command without any pre-configured scope."
+commands.allow = ["export_project_json"]
+
+[[permission]]
+identifier = "deny-export-project-json"
+description = "Denies the export_project_json command without any pre-configured scope."
+commands.deny = ["export_project_json"]

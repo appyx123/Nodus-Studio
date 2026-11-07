@@ -14,11 +14,11 @@ const MAX_WIRES: usize = 1024;
 
 type Pins = BTreeMap<String, Pin>;
 
-struct Definition {
-    version: String,
-    pins: Pins,
-    manifest: Manifest,
-    lua_source: String,
+pub(crate) struct Definition {
+    pub(crate) version: String,
+    pub(crate) pins: Pins,
+    pub(crate) manifest: Manifest,
+    pub(crate) lua_source: String,
 }
 
 /// Everything the simulation runtime needs to start one component instance.
@@ -28,19 +28,19 @@ pub struct InstanceProgram {
     pub lua_source: String,
 }
 
-struct Instance {
-    component_id: String,
-    component_version: String,
-    pins: Pins,
-    runtime: BTreeMap<String, PinRuntime>,
+pub(crate) struct Instance {
+    pub(crate) component_id: String,
+    pub(crate) component_version: String,
+    pub(crate) pins: Pins,
+    pub(crate) runtime: BTreeMap<String, PinRuntime>,
 }
 
 /// Session topology only: no filesystem, presentation coordinates, or simulation.
 #[derive(Default)]
 pub struct CircuitState {
-    catalog: BTreeMap<String, Definition>,
-    instances: BTreeMap<String, Instance>,
-    wires: BTreeMap<String, Wire>,
+    pub(crate) catalog: BTreeMap<String, Definition>,
+    pub(crate) instances: BTreeMap<String, Instance>,
+    pub(crate) wires: BTreeMap<String, Wire>,
 }
 
 impl CircuitState {

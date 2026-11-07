@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-publish-mqtt-message"
+description = "Enables the publish_mqtt_message command without any pre-configured scope."
+commands.allow = ["publish_mqtt_message"]
+
+[[permission]]
+identifier = "deny-publish-mqtt-message"
+description = "Denies the publish_mqtt_message command without any pre-configured scope."
+commands.deny = ["publish_mqtt_message"]

@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-set-mqtt-config"
+description = "Enables the set_mqtt_config command without any pre-configured scope."
+commands.allow = ["set_mqtt_config"]
+
+[[permission]]
+identifier = "deny-set-mqtt-config"
+description = "Denies the set_mqtt_config command without any pre-configured scope."
+commands.deny = ["set_mqtt_config"]

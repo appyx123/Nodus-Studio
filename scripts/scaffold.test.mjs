@@ -54,6 +54,14 @@ test("catalog grants only local discovery and retains a production CSP", () => {
     "allow-compile-sketch",
     "allow-cancel-compilation",
     "allow-serial-io",
+    "allow-get-mqtt-config",
+    "allow-set-mqtt-config",
+    "allow-get-mqtt-status",
+    "allow-publish-mqtt-message",
+    "allow-save-project",
+    "allow-load-project",
+    "allow-export-project-json",
+    "allow-import-project-json",
   ]);
   assert.deepEqual(config.bundle.resources, { "../components-registry/": "components-registry/" });
   assert.ok(config.app.security.csp.includes("default-src 'self'"));

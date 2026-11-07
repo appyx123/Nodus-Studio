@@ -28,6 +28,26 @@ pub fn register_scan(
     Ok(catalog)
 }
 
+pub fn load_project(
+    state: &ManagedCircuit,
+    path: &std::path::Path,
+) -> Result<crate::project::LoadProjectResponse, NodusError> {
+    let mut guard = lock(state)?;
+    crate::project::load_project_from_path(path, &mut guard)
+}
+
+pub fn import_project(
+    state: &ManagedCircuit,
+    project: &crate::project::NodusProjectFile,
+) -> Result<crate::project::LoadProjectResponse, NodusError> {
+    let mut guard = lock(state)?;
+    let warnings = crate::project::apply_project_to_circuit(project, &mut guard);
+    Ok(crate::project::LoadProjectResponse {
+        project: project.clone(),
+        warnings,
+    })
+}
+
 #[cfg(test)]
 #[path = "circuit_tests.rs"]
 mod tests;

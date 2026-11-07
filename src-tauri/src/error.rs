@@ -6,6 +6,8 @@ pub enum NodusError {
     PackageDiscovery(String),
     #[error("Circuit edit failed: {0}")]
     Circuit(String),
+    #[error("Project operation failed: {0}")]
+    Project(String),
     #[error("Component discovery worker failed: {0}")]
     Worker(String),
 }

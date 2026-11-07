@@ -4,6 +4,7 @@ mod error;
 pub mod ipc;
 pub mod mcu;
 pub mod mqtt;
+pub mod project;
 pub mod sandbox;
 
 pub use error::NodusError;
@@ -31,7 +32,11 @@ pub fn run() -> Result<(), NodusError> {
             ipc::commands::get_mqtt_config,
             ipc::commands::set_mqtt_config,
             ipc::commands::get_mqtt_status,
-            ipc::commands::publish_mqtt_message
+            ipc::commands::publish_mqtt_message,
+            ipc::commands::save_project,
+            ipc::commands::load_project,
+            ipc::commands::export_project_json,
+            ipc::commands::import_project_json
         ])
         .run(tauri::generate_context!())?;
     Ok(())

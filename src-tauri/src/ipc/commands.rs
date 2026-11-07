@@ -153,6 +153,52 @@ pub async fn publish_mqtt_message(
     Ok(())
 }
 
+#[tauri::command(rename_all = "snake_case")]
+pub async fn save_project(
+    path: String,
+    project: crate::project::NodusProjectFile,
+) -> Result<(), NodusError> {
+    crate::project::save_project_atomic(Path::new(&path), &project)
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn load_project(
+    controller: tauri::State<'_, SimulationController>,
+    circuit: tauri::State<'_, ManagedCircuit>,
+    path: String,
+) -> Result<crate::project::LoadProjectResponse, NodusError> {
+    if controller.is_active() {
+        return Err(NodusError::Project(
+            "Stop the simulation before loading a project".into(),
+        ));
+    }
+    circuit::load_project(&circuit, Path::new(&path))
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn export_project_json(
+    project: crate::project::NodusProjectFile,
+) -> Result<String, NodusError> {
+    let clean = crate::project::sanitize_project(project);
+    serde_json::to_string_pretty(&clean)
+        .map_err(|err| NodusError::Project(format!("Failed to serialize project: {err}")))
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub async fn import_project_json(
+    controller: tauri::State<'_, SimulationController>,
+    circuit: tauri::State<'_, ManagedCircuit>,
+    json_content: String,
+) -> Result<crate::project::LoadProjectResponse, NodusError> {
+    if controller.is_active() {
+        return Err(NodusError::Project(
+            "Stop the simulation before importing a project".into(),
+        ));
+    }
+    let project = crate::project::parse_project_bytes(json_content.as_bytes())?;
+    circuit::import_project(&circuit, &project)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

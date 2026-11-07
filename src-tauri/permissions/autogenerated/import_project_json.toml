@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-import-project-json"
+description = "Enables the import_project_json command without any pre-configured scope."
+commands.allow = ["import_project_json"]
+
+[[permission]]
+identifier = "deny-import-project-json"
+description = "Denies the import_project_json command without any pre-configured scope."
+commands.deny = ["import_project_json"]

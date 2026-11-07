@@ -86,3 +86,7 @@ export function manhattanPath(a: Point, b: Point): string {
     .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
     .join(" ");
 }
+
+export const INITIAL_VIEWPORT: Viewport = { x: 60, y: 40, zoom: 2 };
+export const PACKAGE_MIME = "application/x-nodus-component";
+export const MAX_INSTANCES = 256;

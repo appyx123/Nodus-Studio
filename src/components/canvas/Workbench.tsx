@@ -1,19 +1,34 @@
 import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import type { Resource } from "solid-js";
-import { connectedNetCount, editCircuit, EMPTY_CIRCUIT, sameEndpoint, WIRE_COLORS } from "../../store/circuitStore";
-import { editorOpen, setEditorOpen } from "../../store/editorStore";
+import { connectedNetCount, editCircuit, EMPTY_CIRCUIT, sameEndpoint } from "../../store/circuitStore";
+import { editorOpen, setEditorOpen, sketchSource } from "../../store/editorStore";
 import { mqttOpen, setMqttOpen } from "../../store/mqttStore";
 import type { CircuitEdit, CircuitSnapshot, ComponentPackage, Endpoint, RegistryCatalog, WireColor } from "../../types/nodpkg";
 import CodeEditor from "../editor/CodeEditor";
 import SerialMonitor from "../editor/SerialMonitor";
 import MqttBridgePanel from "../mqtt/MqttBridgePanel";
 import ComponentCatalog from "../library/ComponentCatalog";
-import { dragPosition, GRID, MAX_ZOOM, MIN_ZOOM, pinWorldPoint, screenToWorld, snapPoint, zoomAt } from "./geometry";
+import {
+  dragPosition,
+  GRID,
+  INITIAL_VIEWPORT,
+  MAX_INSTANCES,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  PACKAGE_MIME,
+  pinWorldPoint,
+  screenToWorld,
+  snapPoint,
+  zoomAt,
+} from "./geometry";
 import type { Point, Viewport } from "./geometry";
 import { instanceGraphic } from "./graphic";
 import NodeRenderer from "./NodeRenderer";
 import type { CanvasNode } from "./NodeRenderer";
+import { handleOpenAction, handleSaveAction } from "./projectPersistence";
 import SimulationBar from "./SimulationBar";
+import { WorkbenchStatus } from "./WorkbenchStatus";
+import { WorkbenchToolbar } from "./WorkbenchToolbar";
 import WireLayer from "./WireLayer";
 
 interface Props {
@@ -23,15 +38,10 @@ interface Props {
 
 type Gesture = { pointerId: number; start: Point; viewport: Viewport; node?: { id: string; position: Point } };
 
-const initialView = (): Viewport => ({ x: 60, y: 40, zoom: 2 });
-const buttonClass = "workbench-button";
-const PACKAGE_MIME = "application/x-nodus-component";
-const MAX_INSTANCES = 256;
-
 export default function Workbench(props: Props) {
   let stage!: SVGSVGElement;
   let gesture: Gesture | undefined;
-  const [viewport, setViewport] = createSignal(initialView());
+  const [viewport, setViewport] = createSignal(INITIAL_VIEWPORT);
   const [nodes, setNodes] = createSignal<CanvasNode[]>([]);
   const [circuit, setCircuit] = createSignal<CircuitSnapshot>(EMPTY_CIRCUIT);
   const [selected, setSelected] = createSignal<string>();
@@ -282,33 +292,40 @@ export default function Workbench(props: Props) {
             <p class="mt-1 text-xs text-zinc-400">Authoritative Rust topology · no electrical simulation yet</p>
           </div>
           <SimulationBar selectedNode={selectedNode()} onError={setErrorMessage} onStatus={setMessage} />
-          <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Wire color controls">
-            <span class="text-xs text-zinc-400">Wire color:</span>
-            <For each={WIRE_COLORS}>{(color) => (
-              <button type="button" class={buttonClass} data-color-option={color.value}
-                aria-label={`Wire color ${color.label}`} aria-pressed={(activeWire()?.color ?? wireColor()) === color.value}
-                onClick={() => { void chooseColor(color.value); }}>
-                <span class="inline-block h-2 w-2 rounded-full mr-1" style={{ background: color.hex }} />
-                {color.label}
-              </button>
-            )}</For>
-          </div>
-          <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Viewport controls">
-            <button class={buttonClass} aria-label="Zoom out" disabled={viewport().zoom <= MIN_ZOOM}
-              onClick={() => changeZoom(1 / 1.25)}>−</button>
-            <output class="min-w-14 text-center font-mono text-xs" aria-label="Zoom level">
-              {Math.round(viewport().zoom * 100)}%
-            </output>
-            <button class={buttonClass} aria-label="Zoom in" disabled={viewport().zoom >= MAX_ZOOM}
-              onClick={() => changeZoom(1.25)}>+</button>
-            <button class={buttonClass} onClick={() => { if (!gesture) setViewport(initialView()); }}>Reset view</button>
-            <button class={buttonClass} disabled={!selected() && !selectedWire()}
-              onClick={() => { void removeSelected(); }}>Delete selected</button>
-            <button class={buttonClass} aria-pressed={editorOpen()}
-              onClick={() => setEditorOpen((open) => !open)}>Firmware &amp; Serial</button>
-            <button class={buttonClass} aria-pressed={mqttOpen()}
-              onClick={() => setMqttOpen((open) => !open)}>MQTT Bridge</button>
-          </div>
+          <WorkbenchToolbar
+            wireColor={wireColor()}
+            activeWireColor={activeWire()?.color}
+            onChooseColor={(c) => { void chooseColor(c); }}
+            zoom={viewport().zoom}
+            minZoom={MIN_ZOOM}
+            maxZoom={MAX_ZOOM}
+            onChangeZoom={(factor) => changeZoom(factor)}
+            onResetView={() => { if (!gesture) setViewport(INITIAL_VIEWPORT); }}
+            canDelete={Boolean(selected() || selectedWire())}
+            onDeleteSelected={() => { void removeSelected(); }}
+            editorOpen={editorOpen()}
+            onToggleEditor={() => setEditorOpen((open) => !open)}
+            mqttOpen={mqttOpen()}
+            onToggleMqtt={() => setMqttOpen((open) => !open)}
+            onSaveProject={() => {
+              void handleSaveAction(nodes(), circuit(), viewport(), sketchSource(), setMessage, setErrorMessage);
+            }}
+            onOpenProject={(e) => {
+              void handleOpenAction(
+                e,
+                props.catalog()?.packages ?? [],
+                (res) => {
+                  setNodes(res.nodes);
+                  setCircuit(res.circuit);
+                  setViewport(res.viewport);
+                  setSelected(undefined);
+                  setSelectedWire(undefined);
+                },
+                setMessage,
+                setErrorMessage
+              );
+            }}
+          />
         </div>
         <div class="workbench-stage">
           <svg ref={stage} data-workbench data-zoom={viewport().zoom} data-pan-x={viewport().x} data-pan-y={viewport().y}
@@ -351,35 +368,18 @@ export default function Workbench(props: Props) {
             </div>
           </Show>
         </div>
-        <div class="workbench-status">
-          <p id="canvas-help">Click pin A then pin B to wire · Drag empty space to pan · Scroll to zoom · Drag a component to move</p>
-          <p class="mt-1" role="status">
-            {nodes().length} instance(s) · {circuit().wires.length} wire(s) · {circuit().nets.length} net(s) ({multiEndpointNets()} connected) · Grid 2.54 mm
-          </p>
-          <Show when={pendingPin()}>{(pin) => (
-            <p class="mt-1 font-mono text-emerald-400" role="status">
-              Wiring from {pin().instance_id}.{pin().pin_id} · Click target pin or press Escape
-            </p>
-          )}</Show>
-          <Show when={selectedNode()}>{(node) => (
-            <div class="mt-1 flex flex-wrap items-center gap-2 font-mono">
-              <span>Selected: {node().pkg.manifest.component.name} · x {node().position.x} · y {node().position.y}</span>
-              <For each={node().pkg.manifest.pins.filter((pin) => pin.type !== "nc")}>{(pin) => (
-                <button type="button" class={buttonClass} aria-label={`Pin ${pin.id} on ${node().instanceId}`}
-                  onClick={() => { void activatePin({ instance_id: node().instanceId, pin_id: pin.id }); }}>
-                  Pin {pin.id}
-                </button>
-              )}</For>
-            </div>
-          )}</Show>
-          <Show when={activeWire()}>{(wire) => (
-            <p class="mt-1 font-mono">
-              Selected wire: {wire().wire_id} ({wire().color}) · {wire().a.instance_id}.{wire().a.pin_id} ↔ {wire().b.instance_id}.{wire().b.pin_id}
-            </p>
-          )}</Show>
-          <Show when={errorMessage()}><p class="mt-1 text-red-300" role="alert">{errorMessage()}</p></Show>
-          <p class="sr-only" role="status">{message()}</p>
-        </div>
+        <WorkbenchStatus
+          nodeCount={nodes().length}
+          wireCount={circuit().wires.length}
+          netCount={circuit().nets.length}
+          multiEndpointNets={multiEndpointNets()}
+          pendingPin={pendingPin()}
+          selectedNode={selectedNode()}
+          activeWire={activeWire()}
+          onActivatePin={(ep) => { void activatePin(ep); }}
+          message={message()}
+          errorMessage={errorMessage()}
+        />
       </main>
       <Show when={editorOpen()}>
         <aside aria-label="Firmware and serial panel" class="editor-sidebar">

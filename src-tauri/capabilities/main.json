@@ -12,6 +12,14 @@
     "allow-set-control-value",
     "allow-compile-sketch",
     "allow-cancel-compilation",
-    "allow-serial-io"
+    "allow-serial-io",
+    "allow-get-mqtt-config",
+    "allow-set-mqtt-config",
+    "allow-get-mqtt-status",
+    "allow-publish-mqtt-message",
+    "allow-save-project",
+    "allow-load-project",
+    "allow-export-project-json",
+    "allow-import-project-json"
   ]
 }
