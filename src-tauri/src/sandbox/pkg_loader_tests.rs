@@ -320,13 +320,21 @@ fn builtin_led_matches_the_shared_manifest_contract() {
     assert_eq!(
         ids,
         vec![
+            "actuator-servo-sg90",
             "basic-led",
             "basic-power-source",
             "basic-pushbutton",
             "mcu-arduino-uno",
+            "sensor-dht22",
+            "sensor-hcsr04",
         ]
     );
-    let actual = serde_json::to_value(&catalog.packages[0].manifest).unwrap();
+    let led_pkg = catalog
+        .packages
+        .iter()
+        .find(|p| p.manifest.component.id == "basic-led")
+        .unwrap();
+    let actual = serde_json::to_value(&led_pkg.manifest).unwrap();
     let expected: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(workspace.join("docs/nodpkg-v1-led.json")).unwrap(),
     )

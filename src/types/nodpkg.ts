@@ -17,11 +17,13 @@ export interface SliderControl {
   default: number;
 }
 
+export type VisualProperty = "opacity" | "rotation";
+
 export interface NumberVisual {
   id: string;
   type: "number";
   target: string;
-  property: "opacity";
+  property: VisualProperty;
   min: number;
   max: number;
   default: number;

@@ -112,10 +112,11 @@ pub enum NumberType {
     Number,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum VisualProperty {
     Opacity,
+    Rotation,
 }
 
 pub fn parse_manifest(source: &str) -> Result<Manifest, String> {
@@ -219,8 +220,14 @@ impl Manifest {
             unique_id("visuals.id", &visual.id, &mut ids)?;
             prefixed("visuals.target", &visual.target, "dyn-")?;
             range("visuals.range", visual.min, visual.default, visual.max)?;
-            if visual.min < 0.0 || visual.max > 1.0 {
-                return Err("visuals.opacity range must be within 0..=1".into());
+            match visual.property {
+                VisualProperty::Opacity if visual.min < 0.0 || visual.max > 1.0 => {
+                    return Err("visuals.opacity range must be within 0..=1".into());
+                }
+                VisualProperty::Rotation if visual.min < -360.0 || visual.max > 360.0 => {
+                    return Err("visuals.rotation range must be within -360..=360".into());
+                }
+                _ => {}
             }
             // Opacity is the only v1 property; target uniqueness is binding uniqueness.
             if !targets.insert(&visual.target) {

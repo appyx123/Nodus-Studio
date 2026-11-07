@@ -1,0 +1,58 @@
+schema_version = 1
+
+[compatibility]
+engine_api = 1
+
+[component]
+id = "sensor-hcsr04"
+name = "HC-SR04 Ultrasonic Distance Sensor"
+category = "Sensors"
+author = "Nodus Community"
+version = "1.0.0"
+description = "Ultrasonic ranging module providing 2 cm to 400 cm non-contact measurement with trigger and echo timing."
+
+[electrical]
+operating_voltage_min = 4.5
+operating_voltage_max = 5.5
+
+[[pins]]
+id = "VCC"
+name = "Power"
+type = "power"
+svg_anchor = "pin-vcc"
+
+[[pins]]
+id = "TRIG"
+name = "Trigger Input"
+type = "input"
+svg_anchor = "pin-trig"
+
+[[pins]]
+id = "ECHO"
+name = "Echo Output"
+type = "output"
+svg_anchor = "pin-echo"
+
+[[pins]]
+id = "GND"
+name = "Ground"
+type = "ground"
+svg_anchor = "pin-gnd"
+
+[[controls]]
+id = "distance"
+label = "Obstacle Distance (cm)"
+type = "slider"
+min = 2.0
+max = 400.0
+step = 0.5
+default = 20.0
+
+[[visuals]]
+id = "pulse"
+type = "number"
+target = "dyn-pulse"
+property = "opacity"
+min = 0.15
+max = 1.0
+default = 0.2

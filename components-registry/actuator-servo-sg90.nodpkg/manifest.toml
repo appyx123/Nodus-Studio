@@ -1,0 +1,43 @@
+schema_version = 1
+
+[compatibility]
+engine_api = 1
+
+[component]
+id = "actuator-servo-sg90"
+name = "TowerPro SG90 Micro Servo"
+category = "Actuators"
+author = "Nodus Community"
+version = "1.0.0"
+description = "Micro servo motor driven by standard 50 Hz PWM control pulses (1 ms to 2 ms for 0° to 180° rotation)."
+
+[electrical]
+operating_voltage_min = 4.8
+operating_voltage_max = 6.0
+
+[[pins]]
+id = "PWM"
+name = "Control Signal"
+type = "input"
+svg_anchor = "pin-pwm"
+
+[[pins]]
+id = "VCC"
+name = "Power"
+type = "power"
+svg_anchor = "pin-vcc"
+
+[[pins]]
+id = "GND"
+name = "Ground"
+type = "ground"
+svg_anchor = "pin-gnd"
+
+[[visuals]]
+id = "angle"
+type = "number"
+target = "dyn-horn"
+property = "rotation"
+min = 0.0
+max = 180.0
+default = 90.0

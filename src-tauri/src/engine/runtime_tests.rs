@@ -8,7 +8,7 @@ fn registry_state() -> CircuitState {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../components-registry");
     let catalog = scan_registry(&root).unwrap();
     assert!(catalog.diagnostics.is_empty(), "{:?}", catalog.diagnostics);
-    assert_eq!(catalog.packages.len(), 4);
+    assert_eq!(catalog.packages.len(), 7);
     let mut state = CircuitState::default();
     state.register_catalog(&catalog);
     state
@@ -217,4 +217,50 @@ void loop() {
         .advance(&mut circuit, SimTime::from_ns(10_000_000).unwrap())
         .unwrap();
     assert!((brightness(&runtime, &node(1)) - 0.15).abs() < 1e-6);
+}
+
+#[test]
+fn sensors_and_actuators_operate_with_expected_timing_and_visuals() {
+    let mut circuit = registry_state();
+    add_part(&mut circuit, 10, "actuator-servo-sg90");
+    add_part(&mut circuit, 20, "sensor-hcsr04");
+    add_part(&mut circuit, 30, "sensor-dht22");
+
+    let mut runtime = SimulationRuntime::start(&mut circuit).unwrap();
+    runtime
+        .advance(&mut circuit, SimTime::from_ns(1_000_000).unwrap())
+        .unwrap();
+
+    // 1. Verify Servo SG90 initial angle is 90 deg
+    let servo_angle = runtime
+        .instance_states()
+        .find(|(id, _, _)| *id == node(10))
+        .and_then(|(_, _, v)| v.get("angle").copied())
+        .unwrap();
+    assert_eq!(servo_angle, 90.0);
+
+    // 2. Verify HC-SR04 distance control and initial visual
+    runtime
+        .set_control(&mut circuit, &node(20), "distance", 15.0)
+        .unwrap();
+    let hcsr_pulse = runtime
+        .instance_states()
+        .find(|(id, _, _)| *id == node(20))
+        .and_then(|(_, _, v)| v.get("pulse").copied())
+        .unwrap();
+    assert_eq!(hcsr_pulse, 0.2);
+
+    // 3. Verify DHT22 controls set
+    runtime
+        .set_control(&mut circuit, &node(30), "temperature", 28.5)
+        .unwrap();
+    runtime
+        .set_control(&mut circuit, &node(30), "humidity", 65.0)
+        .unwrap();
+    let dht_act = runtime
+        .instance_states()
+        .find(|(id, _, _)| *id == node(30))
+        .and_then(|(_, _, v)| v.get("activity").copied())
+        .unwrap();
+    assert_eq!(dht_act, 0.2);
 }

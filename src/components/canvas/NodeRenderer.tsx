@@ -40,6 +40,13 @@ export default function NodeRenderer(props: Props) {
       const val = inst?.visuals[v.id] ?? v.default;
       if (target && v.property === "opacity") {
         target.setAttribute("opacity", String(val));
+      } else if (target && v.property === "rotation") {
+        const bbox = typeof (target as SVGGraphicsElement).getBBox === "function"
+          ? (target as SVGGraphicsElement).getBBox()
+          : null;
+        const cx = bbox ? bbox.x + bbox.width / 2 : 0;
+        const cy = bbox ? bbox.y + bbox.height / 2 : 0;
+        target.setAttribute("transform", `rotate(${val} ${cx} ${cy})`);
       }
     }
   });

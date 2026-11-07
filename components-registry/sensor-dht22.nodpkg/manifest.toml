@@ -1,0 +1,67 @@
+schema_version = 1
+
+[compatibility]
+engine_api = 1
+
+[component]
+id = "sensor-dht22"
+name = "DHT22 Temperature & Humidity Sensor"
+category = "Sensors"
+author = "Nodus Community"
+version = "1.0.0"
+description = "Digital relative humidity and temperature sensor with calibrated 1-wire output."
+
+[electrical]
+operating_voltage_min = 3.3
+operating_voltage_max = 5.5
+
+[[pins]]
+id = "VCC"
+name = "Power"
+type = "power"
+svg_anchor = "pin-vcc"
+
+[[pins]]
+id = "DATA"
+name = "Serial Data"
+type = "bidirectional"
+svg_anchor = "pin-data"
+
+[[pins]]
+id = "NC"
+name = "No Connect"
+type = "nc"
+svg_anchor = "pin-nc"
+
+[[pins]]
+id = "GND"
+name = "Ground"
+type = "ground"
+svg_anchor = "pin-gnd"
+
+[[controls]]
+id = "temperature"
+label = "Temperature (°C)"
+type = "slider"
+min = -40.0
+max = 80.0
+step = 0.1
+default = 25.0
+
+[[controls]]
+id = "humidity"
+label = "Humidity (%)"
+type = "slider"
+min = 0.0
+max = 100.0
+step = 0.1
+default = 50.0
+
+[[visuals]]
+id = "activity"
+type = "number"
+target = "dyn-activity"
+property = "opacity"
+min = 0.15
+max = 1.0
+default = 0.2

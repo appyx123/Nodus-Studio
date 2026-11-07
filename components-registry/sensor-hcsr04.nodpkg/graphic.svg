@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 114.3 76.2">
+  <title>HC-SR04 Ultrasonic Sensor</title>
+  <desc>Ultrasonic distance sensor with dual aluminum transducers and 4-pin header.</desc>
+  <rect x="4" y="4" width="106.3" height="46" rx="4" fill="#0284c7" stroke="#0369a1" stroke-width="1.5"/>
+  <circle cx="28" cy="27" r="18" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="28" cy="27" r="14" fill="#cbd5e1"/>
+  <circle cx="28" cy="27" r="8" fill="#94a3b8"/>
+  <text x="28" y="29" text-anchor="middle" font-family="sans-serif" font-size="5" fill="#475569">T</text>
+  <circle cx="86.3" cy="27" r="18" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="86.3" cy="27" r="14" fill="#cbd5e1"/>
+  <circle cx="86.3" cy="27" r="8" fill="#94a3b8"/>
+  <text x="86.3" y="29" text-anchor="middle" font-family="sans-serif" font-size="5" fill="#475569">R</text>
+  <circle id="dyn-pulse" cx="57.15" cy="27" r="4" fill="#facc15" opacity="0.2"/>
+  <text x="57.15" y="16" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="#ffffff">HC-SR04</text>
+  <rect x="16.05" y="50" width="6" height="13.5" fill="#a1a1aa"/>
+  <rect x="41.45" y="50" width="6" height="13.5" fill="#a1a1aa"/>
+  <rect x="66.85" y="50" width="6" height="13.5" fill="#a1a1aa"/>
+  <rect x="92.25" y="50" width="6" height="13.5" fill="#a1a1aa"/>
+  <circle id="pin-vcc" cx="19.05" cy="63.5" r="4" fill="#d4d4d8" stroke="#52525b" stroke-width="1"/>
+  <circle id="pin-trig" cx="44.45" cy="63.5" r="4" fill="#d4d4d8" stroke="#52525b" stroke-width="1"/>
+  <circle id="pin-echo" cx="69.85" cy="63.5" r="4" fill="#d4d4d8" stroke="#52525b" stroke-width="1"/>
+  <circle id="pin-gnd" cx="95.25" cy="63.5" r="4" fill="#d4d4d8" stroke="#52525b" stroke-width="1"/>
+  <text x="19.05" y="73" text-anchor="middle" font-family="sans-serif" font-size="5" fill="#94a3b8">VCC</text>
+  <text x="44.45" y="73" text-anchor="middle" font-family="sans-serif" font-size="5" fill="#94a3b8">TRIG</text>
+  <text x="69.85" y="73" text-anchor="middle" font-family="sans-serif" font-size="5" fill="#94a3b8">ECHO</text>
+  <text x="95.25" y="73" text-anchor="middle" font-family="sans-serif" font-size="5" fill="#94a3b8">GND</text>
+</svg>
