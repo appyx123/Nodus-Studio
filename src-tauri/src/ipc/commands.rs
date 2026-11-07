@@ -120,6 +120,39 @@ pub async fn serial_io(
     serial.handle_request(request)
 }
 
+#[tauri::command]
+pub async fn get_mqtt_config(
+    mqtt: tauri::State<'_, Arc<crate::mqtt::MqttBridgeController>>,
+) -> Result<crate::mqtt::MqttConfig, NodusError> {
+    Ok(mqtt.config())
+}
+
+#[tauri::command]
+pub async fn set_mqtt_config(
+    mqtt: tauri::State<'_, Arc<crate::mqtt::MqttBridgeController>>,
+    config: crate::mqtt::MqttConfig,
+) -> Result<(), NodusError> {
+    mqtt.set_config(config);
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn get_mqtt_status(
+    mqtt: tauri::State<'_, Arc<crate::mqtt::MqttBridgeController>>,
+) -> Result<crate::mqtt::MqttStatus, NodusError> {
+    Ok(mqtt.status())
+}
+
+#[tauri::command]
+pub async fn publish_mqtt_message(
+    mqtt: tauri::State<'_, Arc<crate::mqtt::MqttBridgeController>>,
+    topic: String,
+    payload: String,
+) -> Result<(), NodusError> {
+    mqtt.publish(topic, payload);
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

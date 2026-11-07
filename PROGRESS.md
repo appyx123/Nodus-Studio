@@ -4,16 +4,16 @@
 
 Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint tetap menjadi sumber kebenaran persyaratan; file ini merangkum keadaan implementasi.
 
-- **Fase aktif:** Fase 4 — Sensor, Bus, & MQTT (`in-progress`).
-- **Subtahap terakhir:** Fase 4 Langkah 3 — display OLED SSD1306 (I2C) dan emulasi GDDRAM (`completed`).
+- **Fase aktif:** Fase 4 — Sensor, Bus, & MQTT (`completed`).
+- **Subtahap terakhir:** Fase 4 Langkah 4 — jembatan IoT virtual (Virtual MQTT Bridge) (`completed`).
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 1 telah memiliki bukti uji; pemeriksaan input fisik manual dicatat `not-run`).
 - **Status Fase 2:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 2 telah memiliki bukti uji).
 - **Status Fase 3:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 3 telah memiliki bukti uji).
-- **Status Fase 4:** `in-progress` (Langkah 1, 2, & 3 selesai; Langkah 4 dalam pengerjaan).
-- **Laporan terbaru:** [020 — Display OLED SSD1306 (I2C) dan emulasi GDDRAM](docs/reports/020-phase-4-display-ssd1306-oled.md).
+- **Status Fase 4:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 4 telah memiliki bukti uji).
+- **Laporan terbaru:** [021 — Jembatan IoT virtual (Virtual MQTT Bridge) dan selesainya Fase 4](docs/reports/021-phase-4-virtual-mqtt-bridge.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Fase 4 Langkah 4 — Jembatan IoT Virtual (Virtual MQTT Bridge).
+- **Langkah berikutnya:** Fase 5 — Penyimpanan, Ekspor, & Distribusi Desktop (`not-started`).
 
 ## Ringkasan roadmap
 
@@ -22,8 +22,8 @@ Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint
 | 1 — Fondasi dan kanvas | `completed` | Scaffold Tauri v2 + SolidJS, loader `.nodpkg` v1, katalog, kanvas pan/zoom/snap/drag, `WireLayer.tsx` Manhattan, dan netlist Rust (`circuit_graph.rs`) lulus 56 tes Rust, 24 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 2 — Mesin simulasi dan Lua | `completed` | `SimTime` half-ns, `Scheduler`, resolusi net digital, sandbox Lua 5.4 (`mlua`), streamer biner `NDFR` 60 Hz, `basic-power-source`/`basic-pushbutton`/`basic-led`, lulus 70 tes Rust, 26 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 3 — Editor, compiler, dan AVR | `completed` | Langkah 1–4 selesai: spike backend AVR, `arduino-cli 1.5.1` + `arduino:avr@1.8.8`, `arduino_cli.rs`, `uart.rs`, `CodeEditor.tsx`, `SerialMonitor.tsx`, `traits.rs`, `avr_uno.rs`, paket `mcu-arduino-uno.nodpkg`, lulus 75 tes Rust, 27 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
-| 4 — Sensor, bus, dan MQTT | `in-progress` | Langkah 1–3 selesai: bus I2C/SPI, emulasi TWI/SPI ATmega328P, paket `sensor-dht22`, `sensor-hcsr04`, `actuator-servo-sg90`, emulator `Ssd1306Device` (GDDRAM 1024B, multi-mode), paket `display-ssd1306`, lulus 79 tes Rust, 27 tes Node, dan desktop smoke |
-| 5 — Penyimpanan dan distribusi | `not-started` | Menunggu Fase 4 selesai dan teruji |
+| 4 — Sensor, bus, dan MQTT | `completed` | Langkah 1–4 selesai: bus coordinator I2C/SPI (`Wire.h`/`SPI.h`), paket `sensor-dht22`, `sensor-hcsr04`, `actuator-servo-sg90`, display OLED `display-ssd1306` (GDDRAM 1024B), client virtual MQTT v3.1.1 + panel UI, lulus 81 tes Rust, 27 tes Node, dan desktop smoke |
+| 5 — Penyimpanan dan distribusi | `not-started` | Menunggu otorisasi memulai Fase 5 |
 
 ## Implementasi yang tersedia
 
@@ -87,5 +87,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [018 — Fase 4: protokol bus standar (I2C & SPI) dan emulasi periferal ATmega328P](docs/reports/018-phase-4-i2c-spi-bus-protocols.md)
 - [019 — Fase 4: paket komponen sensor & aktuator canggih (DHT22, HC-SR04, SG90)](docs/reports/019-phase-4-sensors-and-actuator-packages.md)
 - [020 — Fase 4: display OLED SSD1306 (I2C) dan emulasi GDDRAM](docs/reports/020-phase-4-display-ssd1306-oled.md)
+- [021 — Fase 4: jembatan IoT virtual (Virtual MQTT Bridge) dan selesainya Fase 4](docs/reports/021-phase-4-virtual-mqtt-bridge.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `021` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `022` (periksa ulang sebelum membuat file).

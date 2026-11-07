@@ -2,9 +2,11 @@ import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-j
 import type { Resource } from "solid-js";
 import { connectedNetCount, editCircuit, EMPTY_CIRCUIT, sameEndpoint, WIRE_COLORS } from "../../store/circuitStore";
 import { editorOpen, setEditorOpen } from "../../store/editorStore";
+import { mqttOpen, setMqttOpen } from "../../store/mqttStore";
 import type { CircuitEdit, CircuitSnapshot, ComponentPackage, Endpoint, RegistryCatalog, WireColor } from "../../types/nodpkg";
 import CodeEditor from "../editor/CodeEditor";
 import SerialMonitor from "../editor/SerialMonitor";
+import MqttBridgePanel from "../mqtt/MqttBridgePanel";
 import ComponentCatalog from "../library/ComponentCatalog";
 import { dragPosition, GRID, MAX_ZOOM, MIN_ZOOM, pinWorldPoint, screenToWorld, snapPoint, zoomAt } from "./geometry";
 import type { Point, Viewport } from "./geometry";
@@ -304,6 +306,8 @@ export default function Workbench(props: Props) {
               onClick={() => { void removeSelected(); }}>Delete selected</button>
             <button class={buttonClass} aria-pressed={editorOpen()}
               onClick={() => setEditorOpen((open) => !open)}>Firmware &amp; Serial</button>
+            <button class={buttonClass} aria-pressed={mqttOpen()}
+              onClick={() => setMqttOpen((open) => !open)}>MQTT Bridge</button>
           </div>
         </div>
         <div class="workbench-stage">
@@ -383,6 +387,7 @@ export default function Workbench(props: Props) {
           <SerialMonitor />
         </aside>
       </Show>
+      <MqttBridgePanel />
     </div>
   );
 }

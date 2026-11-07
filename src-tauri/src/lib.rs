@@ -3,6 +3,7 @@ pub mod engine;
 mod error;
 pub mod ipc;
 pub mod mcu;
+pub mod mqtt;
 pub mod sandbox;
 
 pub use error::NodusError;
@@ -15,6 +16,7 @@ pub fn run() -> Result<(), NodusError> {
         ))
         .manage(std::sync::Arc::new(compiler::CompilerController::default()))
         .manage(std::sync::Arc::new(engine::bus::SerialBuffer::default()))
+        .manage(std::sync::Arc::new(mqtt::MqttBridgeController::default()))
         .manage(ipc::simulation::SimulationController::default())
         .invoke_handler(tauri::generate_handler![
             ipc::commands::list_components,
@@ -25,7 +27,11 @@ pub fn run() -> Result<(), NodusError> {
             ipc::commands::set_control_value,
             ipc::commands::compile_sketch,
             ipc::commands::cancel_compilation,
-            ipc::commands::serial_io
+            ipc::commands::serial_io,
+            ipc::commands::get_mqtt_config,
+            ipc::commands::set_mqtt_config,
+            ipc::commands::get_mqtt_status,
+            ipc::commands::publish_mqtt_message
         ])
         .run(tauri::generate_context!())?;
     Ok(())
