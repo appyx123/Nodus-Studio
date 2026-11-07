@@ -324,6 +324,7 @@ fn builtin_led_matches_the_shared_manifest_contract() {
             "basic-led",
             "basic-power-source",
             "basic-pushbutton",
+            "display-ssd1306",
             "mcu-arduino-uno",
             "sensor-dht22",
             "sensor-hcsr04",

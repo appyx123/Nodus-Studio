@@ -1,0 +1,49 @@
+schema_version = 1
+
+[compatibility]
+engine_api = 1
+
+[component]
+id = "display-ssd1306"
+name = "SSD1306 128x64 OLED Display (I2C)"
+category = "Displays"
+author = "Nodus Community"
+version = "1.0.0"
+description = "Monochrome 0.96-inch 128x64 pixel graphic OLED display module with I2C interface."
+
+[electrical]
+operating_voltage_min = 3.3
+operating_voltage_max = 5.5
+
+[[pins]]
+id = "GND"
+name = "Ground"
+type = "ground"
+svg_anchor = "pin-gnd"
+
+[[pins]]
+id = "VCC"
+name = "Power"
+type = "power"
+svg_anchor = "pin-vcc"
+
+[[pins]]
+id = "SCL"
+name = "I2C Clock"
+type = "input"
+svg_anchor = "pin-scl"
+
+[[pins]]
+id = "SDA"
+name = "I2C Data"
+type = "bidirectional"
+svg_anchor = "pin-sda"
+
+[[visuals]]
+id = "screen"
+type = "number"
+target = "dyn-screen"
+property = "opacity"
+min = 0.0
+max = 1.0
+default = 0.05

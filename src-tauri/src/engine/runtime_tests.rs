@@ -8,7 +8,7 @@ fn registry_state() -> CircuitState {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../components-registry");
     let catalog = scan_registry(&root).unwrap();
     assert!(catalog.diagnostics.is_empty(), "{:?}", catalog.diagnostics);
-    assert_eq!(catalog.packages.len(), 7);
+    assert_eq!(catalog.packages.len(), 8);
     let mut state = CircuitState::default();
     state.register_catalog(&catalog);
     state
