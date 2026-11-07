@@ -14,6 +14,43 @@ fn resource_registry(resource_dir: &Path) -> PathBuf {
     resource_dir.join("components-registry")
 }
 
+fn resolve_existing_registry(default_root: PathBuf) -> PathBuf {
+    if default_root.is_dir() {
+        return default_root;
+    }
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(parent) = exe.parent() {
+            for rel in [
+                "../share/nodus-studio/components-registry",
+                "../components-registry",
+                "components-registry",
+            ] {
+                let candidate = parent.join(rel);
+                if candidate.is_dir() {
+                    return candidate;
+                }
+            }
+        }
+    }
+    if let Ok(home) = std::env::var("HOME") {
+        let user_registry = PathBuf::from(home).join(".local/share/nodus-studio/components-registry");
+        if user_registry.is_dir() {
+            return user_registry;
+        }
+    }
+    for system_path in [
+        "/usr/share/nodus-studio/components-registry",
+        "/usr/local/share/nodus-studio/components-registry",
+        "components-registry",
+    ] {
+        let p = PathBuf::from(system_path);
+        if p.is_dir() {
+            return p;
+        }
+    }
+    default_root
+}
+
 #[tauri::command]
 pub async fn list_components(
     app: tauri::AppHandle,
@@ -22,11 +59,12 @@ pub async fn list_components(
     let root = if cfg!(dev) {
         Path::new(env!("CARGO_MANIFEST_DIR")).join("../components-registry")
     } else {
-        resource_registry(
+        let default_root = resource_registry(
             &app.path()
                 .resource_dir()
                 .map_err(|error| NodusError::PackageDiscovery(error.to_string()))?,
-        )
+        );
+        resolve_existing_registry(default_root)
     };
     let result = tauri::async_runtime::spawn_blocking(move || {
         scan_registry(&root)
