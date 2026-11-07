@@ -1,0 +1,80 @@
+{
+  "format": "nodus-project",
+  "version": "1.0.0",
+  "app_id": "org.nodus.Studio",
+  "metadata": {
+    "name": "Arduino Uno Blink",
+    "created_at": 1730000000,
+    "modified_at": 1730000000,
+    "description": "Classic blink circuit connecting Arduino Uno D13 to Basic LED with ground return."
+  },
+  "viewport": {
+    "pan": {
+      "x": 60.0,
+      "y": 40.0
+    },
+    "zoom": 1.5
+  },
+  "circuit": {
+    "instances": [
+      {
+        "instance_id": "node-00000000-0000-0000-0000-000000000001",
+        "component_id": "mcu-arduino-uno",
+        "component_version": "1.0.0",
+        "position": {
+          "x": 80.0,
+          "y": 80.0
+        },
+        "control_values": {}
+      },
+      {
+        "instance_id": "node-00000000-0000-0000-0000-000000000002",
+        "component_id": "basic-led",
+        "component_version": "1.0.0",
+        "position": {
+          "x": 480.0,
+          "y": 140.0
+        },
+        "control_values": {}
+      }
+    ],
+    "wires": [
+      {
+        "wire_id": "wire-00000000-0000-0000-0000-000000000001",
+        "a": {
+          "instance_id": "node-00000000-0000-0000-0000-000000000001",
+          "pin_id": "13"
+        },
+        "b": {
+          "instance_id": "node-00000000-0000-0000-0000-000000000002",
+          "pin_id": "A"
+        },
+        "color": "green"
+      },
+      {
+        "wire_id": "wire-00000000-0000-0000-0000-000000000002",
+        "a": {
+          "instance_id": "node-00000000-0000-0000-0000-000000000001",
+          "pin_id": "GND_1"
+        },
+        "b": {
+          "instance_id": "node-00000000-0000-0000-0000-000000000002",
+          "pin_id": "K"
+        },
+        "color": "blue"
+      }
+    ]
+  },
+  "firmware": {
+    "sketch_source": "void setup() {\n  pinMode(13, OUTPUT);\n  Serial.begin(9600);\n  Serial.println(\"Nodus Blink Active\");\n}\n\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(500);\n  digitalWrite(13, LOW);\n  delay(500);\n}\n",
+    "fqbn": "arduino:avr:uno"
+  },
+  "mqtt_bridge": {
+    "enabled": false,
+    "host": "localhost",
+    "port": 1883,
+    "client_id": "nodus-blink",
+    "sub_topics": [],
+    "pub_topics": []
+  }
+}

@@ -1,0 +1,63 @@
+app-id: org.nodus.Studio
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+command: nodus
+
+finish-args:
+  # Display and Graphics
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --device=dri
+
+  # Network (opt-in for Virtual MQTT bridge connection to brokers)
+  - --share=network
+
+  # File Access for .nodus project storage
+  - --filesystem=xdg-documents:rw
+  - --filesystem=xdg-download:rw
+
+  # Subprocess invocation strategy for Arduino CLI host toolchain fallback
+  - --talk-name=org.freedesktop.portal.Flatpak
+  - --env=ARDUINO_CLI_FALLBACK_PORTAL=1
+
+modules:
+  # Arduino CLI binary bundle for standalone sandbox compilation
+  - name: arduino-cli
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 arduino-cli /app/bin/arduino-cli
+    sources:
+      - type: file
+        url: https://github.com/arduino/arduino-cli/releases/download/v1.1.1/arduino-cli_1.1.1_Linux_64bit.tar.gz
+        sha256: 3c59388df67f677efebc732439a3f2d25088eb8812fcfcf9e0785aa2fe6a4f94
+        only-arches: [x86_64]
+
+  # Main application: Web frontend + Rust backend
+  - name: nodus-studio
+    buildsystem: simple
+    build-commands:
+      # Build frontend assets
+      - npm ci --offline || npm install --prefer-offline
+      - npm run build
+
+      # Build native binary
+      - cargo build --manifest-path src-tauri/Cargo.toml --release --locked
+
+      # Install binary
+      - install -Dm755 src-tauri/target/release/nodus /app/bin/nodus
+
+      # Install built-in component package registry
+      - install -d /app/share/nodus-studio/components-registry
+      - cp -r components-registry/* /app/share/nodus-studio/components-registry/
+
+      # Install desktop integration, icon, and MIME metadata
+      - install -Dm644 packaging/org.nodus.Studio.desktop /app/share/applications/org.nodus.Studio.desktop
+      - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/128x128/apps/org.nodus.Studio.png
+      - install -Dm644 packaging/org.nodus.Studio.xml /app/share/mime/packages/org.nodus.Studio.xml
+      - install -Dm644 packaging/org.nodus.Studio.metainfo.xml /app/share/metainfo/org.nodus.Studio.metainfo.xml
+
+    sources:
+      - type: dir
+        path: ../../

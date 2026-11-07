@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Nodus Studio
+GenericName=IoT Simulation Workbench
+Comment=Desktop IoT and electronics simulation workbench
+Exec=nodus %F
+Icon=org.nodus.Studio
+Terminal=false
+Type=Application
+Categories=Development;Electronics;Engineering;
+MimeType=application/x-nodus-project+json;
+Keywords=electronics;circuit;simulation;arduino;iot;avr;microcontroller;
+StartupWMClass=nodus
+StartupNotify=true

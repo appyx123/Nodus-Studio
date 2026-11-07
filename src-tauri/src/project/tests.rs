@@ -152,3 +152,15 @@ fn missing_package_is_loaded_as_placeholder_with_warning() {
     assert_eq!(snap.instances.len(), 2);
     assert_eq!(snap.wires.len(), 1);
 }
+
+#[test]
+fn example_blink_project_parses_successfully() {
+    let example_path =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../examples/blink-led.nodus");
+    let bytes = fs::read(&example_path).unwrap();
+    let project = parse_project_bytes(&bytes).unwrap();
+    assert_eq!(project.metadata.name, "Arduino Uno Blink");
+    assert_eq!(project.circuit.instances.len(), 2);
+    assert_eq!(project.circuit.wires.len(), 2);
+    assert!(project.firmware.sketch_source.contains("void setup()"));
+}

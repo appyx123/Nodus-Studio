@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.nodus.Studio</id>
+  <name>Nodus Studio</name>
+  <summary>Desktop IoT and electronics simulation workbench</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>
+      Nodus Studio is an open-source interactive electronics workbench and IoT simulation studio.
+      It features an authoritative Rust simulation engine with cycle-accurate AVR emulation,
+      deterministic scheduling, digital logic analyzer, and virtual MQTT IoT integration.
+    </p>
+  </description>
+  <launchable type="desktop-id">org.nodus.Studio.desktop</launchable>
+  <provides>
+    <mediatype>application/x-nodus-project+json</mediatype>
+  </provides>
+  <developer id="org.nodus">
+    <name>Nodus Studio Contributors</name>
+  </developer>
+  <url type="homepage">https://github.com/appyx123/Nodus-Studio</url>
+  <url type="bugtracker">https://github.com/appyx123/Nodus-Studio/issues</url>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.1.0" date="2026-11-07">
+      <description>
+        <p>Initial release with interactive canvas, Lua sandboxing, Arduino Uno AVR emulator, virtual MQTT bridge, .nodus persistence, and digital logic analyzer.</p>
+      </description>
+    </release>
+  </releases>
+</component>

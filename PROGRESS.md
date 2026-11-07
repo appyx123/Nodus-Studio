@@ -4,17 +4,17 @@
 
 Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint tetap menjadi sumber kebenaran persyaratan; file ini merangkum keadaan implementasi.
 
-- **Fase aktif:** Fase 5 — Pemolesan UX, Penyimpanan Proyek, & Pemaketan Linux (`in-progress`).
-- **Subtahap terakhir:** Fase 5 Langkah 2 — logic analyzer digital dan inspeksi sinyal (`completed`).
-- **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
+- **Fase aktif:** Fase 5 — Pemolesan UX, Penyimpanan Proyek, & Pemaketan Linux (`completed`).
+- **Subtahap terakhir:** Fase 5 Langkah 3 — pemaketan Linux (RPM, COPR, Flatpak) dan penyelesaian Fase 5 (`completed`).
+- **Status kesiapan build:** frontend dan native debug `completed`; release build `completed`.
 - **Status Fase 1:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 1 telah memiliki bukti uji; pemeriksaan input fisik manual dicatat `not-run`).
 - **Status Fase 2:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 2 telah memiliki bukti uji).
 - **Status Fase 3:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 3 telah memiliki bukti uji).
 - **Status Fase 4:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 4 telah memiliki bukti uji).
-- **Status Fase 5:** `in-progress` (Langkah 1: format `.nodus`, persistensi terversi, atomic write, IPC, UI; Langkah 2: digital logic analyzer 8 kanal, ring buffer berbatas, visual waveform).
-- **Laporan terbaru:** [023 — Logic analyzer digital dan inspeksi gelombang sinyal](docs/reports/023-phase-5-digital-logic-analyzer.md).
+- **Status Fase 5:** `completed` (Langkah 1–3 selesai: persistensi `.nodus` save/load terversi atomik, digital logic analyzer 8 kanal membaca buffer half-ns dari engine Rust, manifest Flatpak `org.nodus.Studio.yml`, RPM spec, Makefile COPR, desktop integration, dan contoh proyek).
+- **Laporan terbaru:** [024 — Pemaketan Linux (RPM, COPR, Flatpak) dan penyelesaian Fase 5](docs/reports/024-phase-5-linux-packaging.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Fase 5 Langkah 3 — Skrip build RPM dan Flatpak manifest Linux (`not-started`).
+- **Langkah berikutnya:** Rilis versi 0.1.0 dan penyusunan release notes publik.
 
 ## Ringkasan roadmap
 
@@ -24,7 +24,7 @@ Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint
 | 2 — Mesin simulasi dan Lua | `completed` | `SimTime` half-ns, `Scheduler`, resolusi net digital, sandbox Lua 5.4 (`mlua`), streamer biner `NDFR` 60 Hz, `basic-power-source`/`basic-pushbutton`/`basic-led`, lulus 70 tes Rust, 26 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 3 — Editor, compiler, dan AVR | `completed` | Langkah 1–4 selesai: spike backend AVR, `arduino-cli 1.5.1` + `arduino:avr@1.8.8`, `arduino_cli.rs`, `uart.rs`, `CodeEditor.tsx`, `SerialMonitor.tsx`, `traits.rs`, `avr_uno.rs`, paket `mcu-arduino-uno.nodpkg`, lulus 75 tes Rust, 27 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 4 — Sensor, bus, dan MQTT | `completed` | Langkah 1–4 selesai: bus coordinator I2C/SPI (`Wire.h`/`SPI.h`), paket `sensor-dht22`, `sensor-hcsr04`, `actuator-servo-sg90`, display OLED `display-ssd1306` (GDDRAM 1024B), client virtual MQTT v3.1.1 + panel UI, lulus 81 tes Rust, 27 tes Node, dan desktop smoke |
-| 5 — Penyimpanan dan distribusi | `in-progress` | Langkah 1 & 2 selesai: format `.nodus` terversi, persistensi save/load atomik, recovery missing package, digital logic analyzer 8 kanal membaca data berbatas half-ns dari engine Rust, panel inspeksi waveform, 88 tes Rust, 28 tes Node |
+| 5 — Penyimpanan dan distribusi | `completed` | Langkah 1–3 selesai: persistensi `.nodus` save/load terversi atomik, digital logic analyzer 8 kanal membaca buffer half-ns dari engine Rust, manifest Flatpak `org.nodus.Studio.yml`, RPM spec, Makefile COPR, desktop integration, contoh proyek `examples/blink-led.nodus`, 89 tes Rust, 28 tes Node |
 
 ## Implementasi yang tersedia
 
@@ -91,5 +91,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [021 — Fase 4: jembatan IoT virtual (Virtual MQTT Bridge) dan selesainya Fase 4](docs/reports/021-phase-4-virtual-mqtt-bridge.md)
 - [022 — Fase 5: format proyek .nodus dan persistensi save/load terversi](docs/reports/022-phase-5-project-persistence.md)
 - [023 — Fase 5: logic analyzer digital dan inspeksi gelombang sinyal](docs/reports/023-phase-5-digital-logic-analyzer.md)
+- [024 — Fase 5: pemaketan Linux (RPM, COPR, Flatpak) dan penyelesaian Fase 5](docs/reports/024-phase-5-linux-packaging.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `024` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `025` (periksa ulang sebelum membuat file).

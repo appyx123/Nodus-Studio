@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-nodus-project+json">
+    <comment>Nodus Studio Project</comment>
+    <comment xml:lang="id">Proyek Nodus Studio</comment>
+    <acronym>NODUS</acronym>
+    <expanded-acronym>Nodus Project Workspace</expanded-acronym>
+    <icon name="org.nodus.Studio"/>
+    <glob pattern="*.nodus"/>
+    <sub-class-of type="application/json"/>
+  </mime-type>
+</mime-info>
