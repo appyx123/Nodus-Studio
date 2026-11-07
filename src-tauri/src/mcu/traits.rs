@@ -20,6 +20,12 @@ pub trait Microcontroller: Send {
     fn drain_serial_tx(&mut self) -> Vec<u8>;
     fn push_serial_rx(&mut self, bytes: &[u8]);
     fn total_cycles(&self) -> u64;
+    fn i2c_bus(&mut self) -> Option<&mut crate::engine::bus::I2cBus> {
+        None
+    }
+    fn spi_bus(&mut self) -> Option<&mut crate::engine::bus::SpiBus> {
+        None
+    }
 }
 
 /// Parses Intel HEX (`.hex`) records into a flat flash byte image bounded by `max_bytes`.

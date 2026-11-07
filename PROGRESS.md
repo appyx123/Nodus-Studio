@@ -4,15 +4,16 @@
 
 Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint tetap menjadi sumber kebenaran persyaratan; file ini merangkum keadaan implementasi.
 
-- **Fase aktif:** Fase 3 — Integrasi Editor Kode, `arduino-cli`, & Emulasi MCU Pertama (`completed`).
-- **Subtahap terakhir:** Fase 3 Langkah 4 — paket `mcu-arduino-uno.nodpkg`, kontrak MCU, dan verifikasi E2E (`completed`).
+- **Fase aktif:** Fase 4 — Sensor, Bus, & MQTT (`in-progress`).
+- **Subtahap terakhir:** Fase 4 Langkah 1 — protokol bus standar (I2C & SPI) dan emulasi periferal ATmega328P (`completed`).
 - **Status kesiapan build:** frontend dan native debug `completed`; release build `not-started`.
 - **Status Fase 1:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 1 telah memiliki bukti uji; pemeriksaan input fisik manual dicatat `not-run`).
 - **Status Fase 2:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 2 telah memiliki bukti uji).
 - **Status Fase 3:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 3 telah memiliki bukti uji).
-- **Laporan terbaru:** [017 — Paket `mcu-arduino-uno.nodpkg`, kontrak MCU, dan validasi E2E](docs/reports/017-phase-3-arduino-uno-package-and-e2e.md).
+- **Status Fase 4:** `in-progress` (Langkah 1 selesai; Langkah 2–4 dalam pengerjaan).
+- **Laporan terbaru:** [018 — Protokol bus standar (I2C & SPI) dan emulasi periferal ATmega328P](docs/reports/018-phase-4-i2c-spi-bus-protocols.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Fase 4 — Sensor, Bus, & MQTT (`not-started`).
+- **Langkah berikutnya:** Fase 4 Langkah 2 — Sensor & Aktuator Canggih (`sensor-dht22.nodpkg`, `sensor-hcsr04.nodpkg`, `actuator-servo-sg90.nodpkg`).
 
 ## Ringkasan roadmap
 
@@ -21,7 +22,7 @@ Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint
 | 1 — Fondasi dan kanvas | `completed` | Scaffold Tauri v2 + SolidJS, loader `.nodpkg` v1, katalog, kanvas pan/zoom/snap/drag, `WireLayer.tsx` Manhattan, dan netlist Rust (`circuit_graph.rs`) lulus 56 tes Rust, 24 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 2 — Mesin simulasi dan Lua | `completed` | `SimTime` half-ns, `Scheduler`, resolusi net digital, sandbox Lua 5.4 (`mlua`), streamer biner `NDFR` 60 Hz, `basic-power-source`/`basic-pushbutton`/`basic-led`, lulus 70 tes Rust, 26 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
 | 3 — Editor, compiler, dan AVR | `completed` | Langkah 1–4 selesai: spike backend AVR, `arduino-cli 1.5.1` + `arduino:avr@1.8.8`, `arduino_cli.rs`, `uart.rs`, `CodeEditor.tsx`, `SerialMonitor.tsx`, `traits.rs`, `avr_uno.rs`, paket `mcu-arduino-uno.nodpkg`, lulus 75 tes Rust, 27 tes Node, WebKit DOM smoke, dan native GNOME/Wayland smoke |
-| 4 — Sensor, bus, dan MQTT | `not-started` | Menunggu Fase 3 selesai dan teruji |
+| 4 — Sensor, bus, dan MQTT | `in-progress` | Langkah 1 selesai: bus coordinator I2C/SPI (`i2c.rs`, `spi.rs`), emulasi TWI/SPI ATmega328P (`Wire.h` & `SPI.h`), modularisasi `avr_space.rs`, lulus 76 tes Rust dan 27 tes Node |
 | 5 — Penyimpanan dan distribusi | `not-started` | Menunggu Fase 4 selesai dan teruji |
 
 ## Implementasi yang tersedia
@@ -83,5 +84,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [015 — Fase 3: integrasi editor kode, Serial Monitor, dan `arduino_cli.rs`](docs/reports/015-phase-3-editor-serial-and-arduino-cli.md)
 - [016 — Fase 3: trait `Microcontroller` dan emulator `avr_uno.rs`](docs/reports/016-phase-3-mcu-trait-and-avr-uno.md)
 - [017 — Fase 3: paket `mcu-arduino-uno.nodpkg`, kontrak MCU, dan validasi E2E](docs/reports/017-phase-3-arduino-uno-package-and-e2e.md)
+- [018 — Fase 4: protokol bus standar (I2C & SPI) dan emulasi periferal ATmega328P](docs/reports/018-phase-4-i2c-spi-bus-protocols.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `018` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `019` (periksa ulang sebelum membuat file).
