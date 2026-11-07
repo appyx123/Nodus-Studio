@@ -12,9 +12,9 @@ Baca `AGENTS.md`, blueprint, lalu laporan terbaru sebelum melanjutkan. Blueprint
 - **Status Fase 3:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 3 telah memiliki bukti uji).
 - **Status Fase 4:** `completed` (seluruh deliverable dan kriteria kelulusan otomatis Fase 4 telah memiliki bukti uji).
 - **Status Fase 5:** `completed` (Langkah 1–3 selesai: persistensi `.nodus` save/load terversi atomik, digital logic analyzer 8 kanal membaca buffer half-ns dari engine Rust, manifest Flatpak `org.nodus.Studio.yml`, RPM spec, Makefile COPR, desktop integration, dan contoh proyek).
-- **Laporan terbaru:** [024 — Pemaketan Linux (RPM, COPR, Flatpak) dan penyelesaian Fase 5](docs/reports/024-phase-5-linux-packaging.md).
+- **Laporan terbaru:** [025 — Rilis v0.1.0, CI/CD GitHub Actions, dan Distribusi Linux](docs/reports/025-release-v010-ci-packaging.md).
 - **Repository:** https://github.com/appyx123/Nodus-Studio.git — branch `main`, upstream `origin/main`.
-- **Langkah berikutnya:** Rilis versi 0.1.0 dan penyusunan release notes publik.
+- **Langkah berikutnya:** Perluasan periferal IoT pasca-MVP (LCD1602 I2C, Potensiometer, Buzzer) atau fitur UX interaktif kanvas (Undo/Redo).
 
 ## Ringkasan roadmap
 
@@ -92,5 +92,6 @@ Fedora Workstation 45 x86_64, GNOME/Wayland; Rust/Cargo 1.99.1 dari Fedora, rust
 - [022 — Fase 5: format proyek .nodus dan persistensi save/load terversi](docs/reports/022-phase-5-project-persistence.md)
 - [023 — Fase 5: logic analyzer digital dan inspeksi gelombang sinyal](docs/reports/023-phase-5-digital-logic-analyzer.md)
 - [024 — Fase 5: pemaketan Linux (RPM, COPR, Flatpak) dan penyelesaian Fase 5](docs/reports/024-phase-5-linux-packaging.md)
+- [025 — Rilis v0.1.0, CI/CD GitHub Actions, dan Distribusi Linux](docs/reports/025-release-v010-ci-packaging.md)
 
-Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `025` (periksa ulang sebelum membuat file).
+Template: [`docs/reports/TEMPLATE.md`](docs/reports/TEMPLATE.md). Nomor laporan berikutnya: `026` (periksa ulang sebelum membuat file).

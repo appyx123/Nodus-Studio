@@ -1,6 +1,8 @@
 node_modules/
 .contract-test-*/
 dist/
+dist-release/
+build-rpm/
 src-tauri/target/
 src-tauri/gen/
 *.log
